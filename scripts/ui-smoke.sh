@@ -9,7 +9,7 @@ SCENARIO="${1:-controlled-departure}"
 log stream --style compact --predicate 'subsystem == "uk.rttrainer.ATCTrainer"' > "$OUT/oslog.txt" 2>&1 &
 LOGPID=$!
 
-RT_AUTOSTART="$SCENARIO" RT_SKIP_PERMISSIONS=1 \
+RT_AUTOSTART="$SCENARIO" RT_SKIP_PERMISSIONS=1 RT_DUMP_UI=1 \
   "build/RT Trainer.app/Contents/MacOS/ATCTrainer" > "$OUT/stdout.txt" 2>&1 &
 APPPID=$!
 
@@ -24,8 +24,3 @@ cp ~/Library/Logs/DiagnosticReports/ATCTrainer* "$OUT/" 2>/dev/null || true
 echo "--- stdout/stderr"; cat "$OUT/stdout.txt"
 echo "--- os log"; cat "$OUT/oslog.txt"
 
-# Print a small JPEG of the last screenshot into the log (base64) for environments that can't fetch artifacts.
-if [[ -f "$OUT/screen-15s.png" ]]; then
-  sips -Z 1100 -s format jpeg -s formatOptions 45 "$OUT/screen-15s.png" --out "$OUT/thumb.jpg" >/dev/null
-  echo "--- BEGIN THUMB"; base64 -b 120 -i "$OUT/thumb.jpg"; echo "--- END THUMB"
-fi

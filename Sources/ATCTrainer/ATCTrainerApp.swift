@@ -74,7 +74,17 @@ struct ATCTrainerApp: App {
                 .frame(minWidth: 1000, minHeight: 640)
                 .task {
                     NSApplication.shared.activate(ignoringOtherApps: true)
-                    if ProcessInfo.processInfo.environment["RT_SKIP_PERMISSIONS"] == nil {
+                    let env = ProcessInfo.processInfo.environment
+                    if env["RT_DUMP_UI"] != nil {
+                        Task {
+                            for seconds in [2, 6] {
+                                try? await Task.sleep(nanoseconds: UInt64(seconds) * 1_000_000_000)
+                                let phase = model.session.map { "\($0.phase), step \($0.index), log \($0.log.count)" } ?? "no session"
+                                UIDump.dump("t+\(seconds)s session: \(phase)")
+                            }
+                        }
+                    }
+                    if env["RT_SKIP_PERMISSIONS"] == nil {
                         await model.requestPermissions()
                     }
                 }
