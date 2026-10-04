@@ -36,10 +36,9 @@ Bramley, Ashwell, Hadley, Westbury and Northfield are fictional, so nobody mista
 
 ## More scenarios
 
-There are two ways to get scenarios beyond the built-in ones. Both appear in the sidebar, and every scenario is checked by the app before it's added: each example call has to pass its own checks across many random flights, so a broken scenario never marks you wrong unfairly.
+**Check for new scenarios** (sidebar button, or File › Check for New Scenarios) downloads the free scenario packs published in [`scenario-packs/`](scenario-packs) of this repository and lists them under **Downloaded** in the sidebar. It needs no account or API key. New packs are added on request, for example by asking Claude Code to write some.
 
-- **Check for new scenarios** (sidebar button, or File › Check for New Scenarios) downloads the scenario packs published in [`scenario-packs/`](scenario-packs) of this repository. This is free and needs no account. New packs are added on request, for example by asking Claude Code to write some.
-- **New scenario with Claude…** asks Claude to write a fresh scenario on demand. You can describe what you want ("a MATZ crossing in poor weather with a frequency change") or leave it to Claude. This needs your own Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys), entered in the sheet or in Settings and stored in your Keychain. Each scenario is one or two paid API requests (model `claude-opus-5-5`). Scenarios written by Claude stay on your Mac; right-click one to delete it.
+Every downloaded scenario is checked by the app before it's added: each example call has to pass its own checks across many random flights, so a broken scenario never marks you wrong unfairly.
 
 ### Scenario file format
 
