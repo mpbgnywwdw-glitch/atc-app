@@ -23,3 +23,9 @@ kill $APPPID 2>/dev/null; sleep 1; kill $LOGPID 2>/dev/null
 cp ~/Library/Logs/DiagnosticReports/ATCTrainer* "$OUT/" 2>/dev/null || true
 echo "--- stdout/stderr"; cat "$OUT/stdout.txt"
 echo "--- os log"; cat "$OUT/oslog.txt"
+
+# Print a small JPEG of the last screenshot into the log (base64) for environments that can't fetch artifacts.
+if [[ -f "$OUT/screen-15s.png" ]]; then
+  sips -Z 1100 -s format jpeg -s formatOptions 45 "$OUT/screen-15s.png" --out "$OUT/thumb.jpg" >/dev/null
+  echo "--- BEGIN THUMB"; base64 -b 120 -i "$OUT/thumb.jpg"; echo "--- END THUMB"
+fi
