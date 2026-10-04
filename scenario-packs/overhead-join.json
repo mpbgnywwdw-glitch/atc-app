@@ -1,0 +1,285 @@
+{
+  "id": "pack-overhead-join",
+  "category": "controlled",
+  "title": "Overhead join at a controlled aerodrome",
+  "summary": "Standard overhead join at Bramley: overhead, deadside descent, crosswind, downwind and final.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "ATIS",
+      "value": "Information {atisLetter} · runway {runway} · {Circuit}-hand · QNH {qnhValue} · wind {windText}"
+    },
+    {
+      "label": "Position",
+      "value": "10 nm south of Bramley, 2,500 ft on QNH {qnhValue}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're 10 miles south of Bramley at 2,500 feet with information {atis}, returning to land. Make initial contact with Bramley Tower on 118.330.",
+      "model": "Bramley Tower, {cs}, request join.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request join",
+          "value": "",
+          "patterns": [
+            "join|rejoin|inbound"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{cs}, Bramley Tower, pass your message.",
+      "task": "Pass your message: aircraft type, position, altitude and pressure setting, ATIS letter and your request.",
+      "model": "{cs}, {type}, one zero miles south of Bramley, two thousand five hundred feet, QNH {qnh}, information {atis}, request join.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position (10 miles south)",
+          "value": "",
+          "patterns": [
+            "10 miles|south"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand five hundred feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "ATIS information {atis}",
+          "value": "",
+          "patterns": [
+            "information {atisLower}",
+            "info {atisLower}"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request join",
+          "value": "",
+          "patterns": [
+            "join|rejoin"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, join overhead at two thousand feet, runway {rw}, {circuit} hand, QNH {qnh}.",
+      "task": "",
+      "model": "Join overhead at two thousand feet, runway {rw}, {circuit} hand, QNH {qnh}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Join overhead",
+          "value": "",
+          "patterns": [
+            "overhead"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Overhead at two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "{Circuit}-hand circuit",
+          "value": "",
+          "patterns": [
+            "{circuit} hand|{circuit}"
+          ],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're overhead the aerodrome at 2,000 feet. Report overhead.",
+      "model": "{ab}, overhead.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Overhead",
+          "value": "",
+          "patterns": [
+            "overhead"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, roger, report descending deadside.",
+      "task": "You're starting your descent on the deadside. Report it.",
+      "model": "{ab}, descending deadside.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Descending deadside",
+          "value": "",
+          "patterns": [
+            "deadside|descending"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, report crosswind.",
+      "task": "You've crossed the upwind end at circuit height. Report crosswind.",
+      "model": "{ab}, crosswind.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Crosswind",
+          "value": "",
+          "patterns": [
+            "crosswind|cross wind"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, roger.",
+      "task": "You're established on the downwind leg. Make your downwind call.",
+      "model": "{ab}, downwind.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, number one, report final.",
+      "task": "You're on final. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, runway {rw}, cleared to land, surface wind {wind}.",
+      "task": "Read back the landing clearance.",
+      "model": "Cleared to land, runway {rw}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to land",
+          "value": "",
+          "patterns": [
+            "cleared to land|clear to land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

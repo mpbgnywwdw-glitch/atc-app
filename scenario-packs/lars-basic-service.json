@@ -1,0 +1,260 @@
+{
+  "id": "pack-lars-basic-service",
+  "category": "enRoute",
+  "title": "LARS Basic Service with squawk ident",
+  "summary": "Basic Service from Westbury Radar: squawk and QNH, squawk ident, traffic information and freecall.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Westbury Radar",
+      "value": "127.880"
+    },
+    {
+      "label": "Route",
+      "value": "Hadley to Bramley, VFR"
+    },
+    {
+      "label": "Position",
+      "value": "5 nm north of Westbury, 2,500 ft on QNH {qnhValue}"
+    },
+    {
+      "label": "Next frequency",
+      "value": "Bramley Tower 118.330"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Westbury Radar",
+      "atc": "",
+      "task": "Make initial contact with Westbury Radar on 127.880 and ask for a Basic Service.",
+      "model": "Westbury Radar, {cs}, request Basic Service.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Westbury Radar)",
+          "value": "Westbury Radar",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Westbury Radar",
+      "atc": "{cs}, Westbury Radar, pass your message.",
+      "task": "Pass your message: type, from Hadley to Bramley, 5 miles north of Westbury, 2,500 feet on QNH {qnhValue}, request Basic Service.",
+      "model": "{cs}, {type}, from Hadley to Bramley, five miles north of Westbury, two thousand five hundred feet, QNH {qnh}, request Basic Service.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "hadley.*bramley|bramley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "north|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand five hundred feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{cs}, squawk {squawk}, QNH {qnh}.",
+      "task": "",
+      "model": "Squawk {squawk}, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{cs}, squawk ident.",
+      "task": "",
+      "model": "Squawk ident, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Squawk ident",
+          "value": "",
+          "patterns": [
+            "squawk ident|ident"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{ab}, identified five miles north of Westbury, Basic Service, report passing Bramley.",
+      "task": "",
+      "model": "Basic Service, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{ab}, traffic information, traffic two miles ahead, opposite direction, indicating similar level.",
+      "task": "Respond. You haven't spotted the traffic yet.",
+      "model": "Looking, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Looking / traffic in sight",
+          "value": "",
+          "patterns": [
+            "looking|in sight|visual|negative contact|not sighted"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Westbury Radar",
+      "atc": "",
+      "task": "You've passed Bramley. Report passing Bramley and ask for a frequency change to Bramley Tower.",
+      "model": "{ab}, passing Bramley, request frequency change to Bramley Tower.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Passing Bramley",
+          "value": "",
+          "patterns": [
+            "passing|abeam|overhead"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request frequency change",
+          "value": "",
+          "patterns": [
+            "frequency change|freecall|changing"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{ab}, Basic Service terminated, squawk seven thousand, freecall Bramley Tower one one eight decimal three three zero.",
+      "task": "",
+      "model": "Squawk seven thousand, freecall Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk seven thousand",
+          "value": "7000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

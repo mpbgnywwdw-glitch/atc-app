@@ -1,0 +1,260 @@
+{
+  "id": "pack-taxi-give-way",
+  "category": "controlled",
+  "title": "Taxiing: give way, hold position and runway crossing",
+  "summary": "Ground movement instructions at Bramley: give way, hold position, cross a runway, then hand over to Tower.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Ground",
+      "value": "121.780"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "ATIS",
+      "value": "Information {atisLetter} · runway {runway} · QNH {qnhValue} · wind {windText}"
+    },
+    {
+      "label": "Position",
+      "value": "Maintenance hangar, local flight"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Ground",
+      "atc": "",
+      "task": "You're at the maintenance hangar with information {atis}. Call Bramley Ground on 121.780 and request taxi for local flying.",
+      "model": "Bramley Ground, {cs}, {type}, at the maintenance hangar, information {atis}, request taxi for local flying.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Ground)",
+          "value": "Bramley Ground",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "ATIS information {atis}",
+          "value": "",
+          "patterns": [
+            "information {atisLower}",
+            "info {atisLower}"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request taxi",
+          "value": "",
+          "patterns": [
+            "taxi"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, Bramley Ground, taxi to holding point Charlie One via Alpha, give way to the Cessna passing left to right, QNH {qnh}.",
+      "task": "",
+      "model": "Taxi holding point Charlie One via Alpha, give way to the Cessna, QNH {qnh}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Holding point Charlie One",
+          "value": "",
+          "patterns": [
+            "c 1"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Via Alpha",
+          "value": "",
+          "patterns": [
+            "via a"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Give way to the Cessna",
+          "value": "",
+          "patterns": [
+            "give way"
+          ],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, hold position.",
+      "task": "",
+      "model": "Holding position, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Holding position",
+          "value": "",
+          "patterns": [
+            "holding|hold position"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, continue taxi to holding point Charlie One, cross runway one seven.",
+      "task": "",
+      "model": "Cross runway one seven, holding point Charlie One, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cross runway one seven",
+          "value": "",
+          "patterns": [
+            "cross(ing)? runway 17"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Holding point Charlie One",
+          "value": "",
+          "patterns": [
+            "c 1"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're at holding point Charlie One with checks complete. Call Bramley Tower and tell them you're ready.",
+      "model": "Bramley Tower, {ab}, holding point Charlie One, ready for departure.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Ready for departure",
+          "value": "",
+          "patterns": [
+            "ready"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, hold position, landing traffic on final.",
+      "task": "",
+      "model": "Holding, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Holding",
+          "value": "",
+          "patterns": [
+            "holding|hold position"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "lineUpOnly"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, surface wind {wind}, runway {rw}, cleared for take-off.",
+      "task": "Read back the take-off clearance.",
+      "model": "Runway {rw}, cleared for take-off, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared for take-off",
+          "value": "",
+          "patterns": [
+            "cleared for takeoff|cleared takeoff|clear for takeoff"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

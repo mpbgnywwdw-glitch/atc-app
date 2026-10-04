@@ -1,0 +1,255 @@
+{
+  "id": "pack-afis-arrival",
+  "category": "uncontrolled",
+  "title": "AFIS arrival with circuit traffic",
+  "summary": "Arrive at Ashwell (AFIS), join overhead, take traffic information and land at your discretion.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Ashwell Information",
+      "value": "123.505"
+    },
+    {
+      "label": "Position",
+      "value": "5 nm north of Ashwell, 2,000 ft on QNH {qnhValue}, inbound to land"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're 5 miles north of Ashwell at 2,000 feet on QNH {qnhValue}, inbound to land. Call Ashwell Information on 123.505 and ask for airfield information.",
+      "model": "Ashwell Information, {cs}, {type}, five miles north, two thousand feet, QNH {qnh}, inbound for landing, request airfield information.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Ashwell Information)",
+          "value": "Ashwell Information",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "5 miles|north"
+          ],
+          "required": false
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (inbound to land)",
+          "value": "",
+          "patterns": [
+            "inbound|landing|join"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request airfield information",
+          "value": "",
+          "patterns": [
+            "airfield information|airfield details|airfield data"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{cs}, Ashwell Information, runway {rw} in use, {circuit} hand circuit, QNH {qnh}, one aircraft in the circuit.",
+      "task": "Read back the runway and pressure setting.",
+      "model": "Runway {rw}, {circuit} hand, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "{Circuit}-hand circuit",
+          "value": "",
+          "patterns": [
+            "{circuit} hand|{circuit}"
+          ],
+          "required": false
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're overhead at 2,000 feet for an overhead join. Report overhead.",
+      "model": "{cs}, overhead, two thousand feet.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Overhead",
+          "value": "",
+          "patterns": [
+            "overhead"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{ab}, traffic is a Cessna one five two on the downwind leg.",
+      "task": "Respond. You can see the Cessna.",
+      "model": "Traffic in sight, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Traffic in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual|looking"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're on the downwind leg behind the Cessna. Report downwind.",
+      "model": "{ab}, downwind.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "{ab}, roger.",
+      "task": "You're on final. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{ab}, runway {rw}, surface wind {wind}, land at your discretion.",
+      "task": "Reply to the AFISO.",
+      "model": "Landing, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Landing",
+          "value": "",
+          "patterns": [
+            "landing|land"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "{ab}, roger.",
+      "task": "You've vacated the runway. Report vacated.",
+      "model": "{ab}, runway vacated.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Vacated",
+          "value": "",
+          "patterns": [
+            "vacated"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Ashwell Information",
+      "atc": "{ab}, roger.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

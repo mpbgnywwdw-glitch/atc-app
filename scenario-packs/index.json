@@ -1,9 +1,17 @@
 {
-  "version": 1,
+  "version": 2,
   "scenarios": [
+    "afis-arrival.json",
+    "air-ground-departure.json",
     "go-around.json",
     "ground-tower-conditional.json",
+    "lars-basic-service.json",
+    "overhead-join.json",
     "practice-pan.json",
+    "qdm-homing.json",
+    "taxi-give-way.json",
+    "touch-and-go.json",
+    "weather-diversion.json",
     "zone-transit.json"
   ]
 }
