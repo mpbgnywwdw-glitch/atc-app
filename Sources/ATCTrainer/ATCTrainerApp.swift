@@ -71,7 +71,7 @@ struct ATCTrainerApp: App {
         WindowGroup("RT Trainer") {
             ContentView()
                 .environmentObject(model)
-                .frame(minWidth: 1000, minHeight: 640)
+                .frame(minWidth: 900, minHeight: 600)
                 .task {
                     NSApplication.shared.activate(ignoringOtherApps: true)
                     let env = ProcessInfo.processInfo.environment

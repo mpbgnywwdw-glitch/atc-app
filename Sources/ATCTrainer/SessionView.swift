@@ -16,28 +16,25 @@ struct SessionView: View {
         _recognizer = ObservedObject(wrappedValue: session.recognizerForUI)
     }
 
-    // Temporary diagnostic switch for the CI smoke test (RT_VARIANT=no<part>).
-    private let variant = ProcessInfo.processInfo.environment["RT_VARIANT"] ?? ""
-
     var body: some View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
-                if variant != "nobriefing" { BriefingBar(items: session.script.briefing) }
+                BriefingBar(items: session.script.briefing)
                 Divider()
                 if session.phase == .finished {
                     DebriefView(session: session) { model.start(session.scenario) }
                 } else {
-                    if variant != "notranscript" { transcript }
+                    transcript
                     Divider()
-                    if variant != "nocontrols" { controls }
+                    controls
                 }
             }
+            .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
             Divider()
-            if variant != "nofeedback" {
-                FeedbackColumn(session: session)
-                    .frame(width: 360)
-            }
+            FeedbackColumn(session: session)
+                .frame(width: 320)
         }
+        .toolbar { toolbarButtons }
         .navigationTitle(session.scenario.title)
         .onAppear(perform: installKeyMonitor)
         .onDisappear(perform: removeKeyMonitor)
@@ -95,7 +92,7 @@ struct SessionView: View {
             if let task = session.currentStep?.task, session.phase != .atcSpeaking || session.currentStep?.atc == nil {
                 Text(task)
                     .font(.title3)
-                    .fixedSize(horizontal: false, vertical: true)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             } else if session.phase == .atcSpeaking {
                 Text("Listen…")
                     .font(.title3)
@@ -116,56 +113,65 @@ struct SessionView: View {
                           level: recognizer.level,
                           onDown: { session.pttDown() }, onUp: { session.pttUp() })
 
-                VStack(alignment: .leading, spacing: 8) {
-                    HStack {
-                        Button {
-                            session.replayATC()
-                        } label: {
-                            Label("Replay ATC", systemImage: "arrow.counterclockwise")
-                        }
-                        .disabled(session.currentStep?.atc == nil || ![.awaitingPilot, .reviewing].contains(session.phase))
-
-                        Button {
-                            showModel.toggle()
-                        } label: {
-                            Label(showModel ? "Hide example" : "Show example", systemImage: "lightbulb")
-                        }
-                        .disabled(session.currentStep?.model == nil)
-
-                        Button {
-                            session.skip()
-                        } label: {
-                            Label("Skip", systemImage: "forward")
-                        }
+                if session.phase == .reviewing {
+                    Button {
+                        session.next()
+                    } label: {
+                        Label("Continue", systemImage: "arrow.right.circle.fill")
                     }
-                    if session.phase == .reviewing {
-                        HStack {
-                            Button {
-                                session.next()
-                            } label: {
-                                Label("Continue", systemImage: "arrow.right.circle.fill")
-                            }
-                            .buttonStyle(.borderedProminent)
-                            .keyboardShortcut(.return, modifiers: [])
-                            Text("or hold Space to try again")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
+                    .buttonStyle(.borderedProminent)
+                    .keyboardShortcut(.return, modifiers: [])
+                    Text("or hold Space to try again")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                 }
-                Spacer()
-                Button("End", role: .destructive) { model.endSession() }
+                Spacer(minLength: 0)
             }
         }
         .padding(20)
         .background(.bar)
     }
 
+    @ToolbarContentBuilder private var toolbarButtons: some ToolbarContent {
+        ToolbarItemGroup(placement: .primaryAction) {
+            Button {
+                session.replayATC()
+            } label: {
+                Label("Replay ATC", systemImage: "arrow.counterclockwise")
+            }
+            .help("Replay the last ATC transmission")
+            .disabled(session.currentStep?.atc == nil || ![.awaitingPilot, .reviewing].contains(session.phase))
+
+            Button {
+                showModel.toggle()
+            } label: {
+                Label(showModel ? "Hide example" : "Show example", systemImage: "lightbulb")
+            }
+            .help("Show an example of this call")
+            .disabled(session.currentStep?.model == nil || session.phase == .finished)
+
+            Button {
+                session.skip()
+            } label: {
+                Label("Skip", systemImage: "forward")
+            }
+            .help("Skip this call")
+            .disabled(session.phase == .finished)
+
+            Button {
+                model.endSession()
+            } label: {
+                Label("End", systemImage: "xmark.circle")
+            }
+            .help("End this scenario")
+        }
+    }
+
     @ViewBuilder private var statusLabel: some View {
         switch session.phase {
         case .ready: Label("Starting", systemImage: "hourglass").foregroundStyle(.secondary)
         case .atcSpeaking: Label("ATC transmitting", systemImage: "speaker.wave.3.fill").foregroundStyle(.blue)
-        case .awaitingPilot: Label("Your call. Hold Space to transmit", systemImage: "mic").foregroundStyle(.primary)
+        case .awaitingPilot: Label("Your call: hold Space", systemImage: "mic").foregroundStyle(.primary)
         case .recording: Label("Transmitting", systemImage: "dot.radiowaves.left.and.right").foregroundStyle(.red)
         case .analysing: Label("Analysing", systemImage: "waveform").foregroundStyle(.secondary)
         case .reviewing: Label("Review your call", systemImage: "checkmark.bubble").foregroundStyle(.green)
