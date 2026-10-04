@@ -1,0 +1,258 @@
+{
+  "id": "pack-weather-diversion",
+  "category": "enRoute",
+  "title": "Weather diversion with London Information",
+  "summary": "Tell London Information you're diverting, give a position and estimate, then contact Hadley Radio.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "London Information",
+      "value": "124.750"
+    },
+    {
+      "label": "Hadley Radio",
+      "value": "129.830"
+    },
+    {
+      "label": "Situation",
+      "value": "Basic Service en route Bramley to Ashwell; weather ahead is deteriorating"
+    },
+    {
+      "label": "Position",
+      "value": "10 nm west of Bramley, 2,000 ft, estimating Hadley at 45"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "You're receiving a Basic Service from London Information, en route Bramley to Ashwell. The weather ahead is getting worse. Tell London Information you're diverting to Hadley because of the weather.",
+      "model": "London Information, {cs}, diverting to Hadley due to weather.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (London Information)",
+          "value": "London Information",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Diverting to Hadley",
+          "value": "",
+          "patterns": [
+            "divert(ing)? to hadley|hadley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Reason (weather)",
+          "value": "",
+          "patterns": [
+            "weather"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "{cs}, London Information, roger, report your position and estimate for Hadley.",
+      "task": "Give your position (10 miles west of Bramley), altitude (2,000 feet) and your estimate for Hadley (minute 45).",
+      "model": "{cs}, one zero miles west of Bramley, two thousand feet, estimating Hadley at four five.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "west|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Estimate for Hadley",
+          "value": "",
+          "patterns": [
+            "estimating|estimate"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Estimate four five",
+          "value": "45",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, roger, Basic Service continues, {region} pressure {rps}.",
+      "task": "Read back the service and the regional pressure setting.",
+      "model": "Basic Service, {region} {rps}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "{region} pressure {rps}",
+          "value": "{rpsValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "You're approaching Hadley. Tell London Information you're changing to Hadley Radio on 129.830.",
+      "model": "{cs}, changing to Hadley Radio one two niner decimal eight three zero.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Changing frequency",
+          "value": "",
+          "patterns": [
+            "changing|leaving|freecall"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "hadley|129.83"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "London Information",
+      "atc": "{cs}, Basic Service terminated, frequency change approved.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "Call Hadley Radio: you're diverting to Hadley because of the weather, 5 miles north at 2,000 feet, and you'd like airfield information.",
+      "model": "Hadley Radio, {cs}, {type}, diverting to Hadley due to weather, five miles north, two thousand feet, request airfield information.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Hadley Radio)",
+          "value": "Hadley Radio",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Diverting",
+          "value": "",
+          "patterns": [
+            "divert"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "5 miles|north"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request airfield information",
+          "value": "",
+          "patterns": [
+            "airfield information|airfield details|airfield data"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Hadley Radio",
+      "atc": "{cs}, Hadley Radio, runway {rw}, {circuit} hand, QNH {qnh}, no known traffic.",
+      "task": "Read back the runway and pressure setting.",
+      "model": "Runway {rw}, {circuit} hand, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "{Circuit}-hand circuit",
+          "value": "",
+          "patterns": [
+            "{circuit} hand|{circuit}"
+          ],
+          "required": false
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

@@ -1,0 +1,185 @@
+{
+  "id": "pack-air-ground-departure",
+  "category": "uncontrolled",
+  "title": "Air/Ground departure",
+  "summary": "Radio check, intentions and departure from Hadley, an aerodrome with an Air/Ground radio service.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Hadley Radio",
+      "value": "129.830"
+    },
+    {
+      "label": "Plan",
+      "value": "Depart to the south, then London Information 124.750"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "You're at Hadley with the engine running. Make a radio check with Hadley Radio on 129.830.",
+      "model": "Hadley Radio, {cs}, radio check one two niner decimal eight three zero.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Hadley Radio)",
+          "value": "Hadley Radio",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Radio check",
+          "value": "",
+          "patterns": [
+            "radio check"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Frequency 129.830",
+          "value": "129.830",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "{cs}, Hadley Radio, readability five.",
+      "task": "Tell Hadley Radio you're taxiing to the holding point for runway {runway}, departing to the south, and ask for airfield information.",
+      "model": "{cs}, taxiing to holding point runway {rw}, departing to the south, request airfield information.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Taxiing",
+          "value": "",
+          "patterns": [
+            "taxiing|taxi"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request airfield information",
+          "value": "",
+          "patterns": [
+            "airfield information|airfield details|airfield data"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Hadley Radio",
+      "atc": "{cs}, runway {rw}, QNH {qnh}, surface wind {wind}, no known traffic.",
+      "task": "Read back the runway and pressure setting.",
+      "model": "Runway {rw}, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "You're at the holding point with checks complete and the runway is clear. Tell Hadley Radio you're lining up and departing.",
+      "model": "{cs}, lining up and taking off runway {rw}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Lining up and taking off",
+          "value": "",
+          "patterns": [
+            "lining up|taking off|departing"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "{cs}, roger.",
+      "task": "You're airborne and leaving the ATZ to the south. Report leaving and changing to London Information on 124.750.",
+      "model": "{cs}, leaving the ATZ to the south, changing to London Information one two four decimal seven five zero.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Leaving / changing frequency",
+          "value": "",
+          "patterns": [
+            "leaving|changing"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "london information|124.75"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Hadley Radio",
+      "atc": "{cs}, roger, good day.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

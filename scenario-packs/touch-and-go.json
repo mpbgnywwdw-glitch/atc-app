@@ -1,0 +1,237 @@
+{
+  "id": "pack-touch-and-go",
+  "category": "controlled",
+  "title": "Circuits: touch-and-go then full stop",
+  "summary": "Circuit calls at Bramley with traffic to follow, a touch-and-go clearance, then a full-stop landing.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Circuit",
+      "value": "Runway {runway} · {Circuit}-hand · QNH {qnhValue} · wind {windText}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on the downwind leg for runway {runway} and want a touch-and-go. Make your downwind call.",
+      "model": "{cs}, downwind, touch and go.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (touch and go)",
+          "value": "",
+          "patterns": [
+            "touch and go"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, number two, follow the PA28 turning final.",
+      "task": "Acknowledge. You can see the PA28.",
+      "model": "Number two, traffic in sight, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Number two",
+          "value": "",
+          "patterns": [
+            "number 2"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Traffic in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual|traffic sighted|have the traffic"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on final behind the PA28. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, runway {rw}, cleared touch and go, surface wind {wind}.",
+      "task": "Read back the clearance.",
+      "model": "Cleared touch and go, runway {rw}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared touch and go",
+          "value": "",
+          "patterns": [
+            "cleared touch and go|cleared to touch and go|clear touch and go"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're airborne and back on the downwind leg. This time you'll land. Make your downwind call.",
+      "model": "{ab}, downwind to land.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (to land)",
+          "value": "",
+          "patterns": [
+            "land|full stop"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, number one, report final.",
+      "task": "Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, runway {rw}, cleared to land, surface wind {wind}.",
+      "task": "Read back the landing clearance.",
+      "model": "Cleared to land, runway {rw}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to land",
+          "value": "",
+          "patterns": [
+            "cleared to land|clear to land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, vacate right at Delta, taxi to the flying club.",
+      "task": "",
+      "model": "Vacate right at Delta, taxi to the flying club, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Vacate",
+          "value": "",
+          "patterns": [
+            "vacate|vacating"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "At Delta",
+          "value": "",
+          "patterns": [
+            "at d|via d|right d"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Taxi to the club",
+          "value": "",
+          "patterns": [
+            "taxi"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

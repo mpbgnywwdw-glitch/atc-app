@@ -1,0 +1,230 @@
+{
+  "id": "pack-qdm-homing",
+  "category": "enRoute",
+  "title": "QDM homing and squawk ident",
+  "summary": "Ask Bramley Approach for a QDM, pass your details, squawk ident and hand over to Tower.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Position",
+      "value": "About 15 nm south of Bramley, 2,500 ft on QNH {qnhValue}, inbound from Ashwell"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "You're returning to Bramley and not certain of your track. Call Bramley Approach on 126.505 and ask for a QDM.",
+      "model": "Bramley Approach, {cs}, request QDM.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request QDM",
+          "value": "",
+          "patterns": [
+            "qdm|q d m"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{cs}, Bramley Approach, QDM three four zero, class Bravo.",
+      "task": "Read back the QDM.",
+      "model": "QDM three four zero, class Bravo, {cs}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "QDM three four zero",
+          "value": "340",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Class Bravo",
+          "value": "",
+          "patterns": [
+            "class b"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "{cs}, pass your message.",
+      "task": "Pass your message: type, from Ashwell to Bramley, estimating 15 miles south of Bramley, 2,500 feet on QNH {qnhValue}, inbound for landing.",
+      "model": "{cs}, {type}, from Ashwell to Bramley, estimating one five miles south of Bramley, two thousand five hundred feet, QNH {qnh}, inbound for landing.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "ashwell.*bramley|bramley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand five hundred feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions",
+          "value": "",
+          "patterns": [
+            "inbound|landing|join"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, Basic Service, squawk {squawk}, report Bramley in sight.",
+      "task": "",
+      "model": "Basic Service, squawk {squawk}, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        },
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, squawk ident.",
+      "task": "",
+      "model": "Squawk ident, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Squawk ident",
+          "value": "",
+          "patterns": [
+            "squawk ident|ident"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "{ab}, identified one two miles south of Bramley.",
+      "task": "Bramley is now in sight. Tell the controller.",
+      "model": "{ab}, Bramley in sight.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Bramley in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}
