@@ -3,7 +3,9 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject private var model: AppModel
+    @EnvironmentObject private var store: ScenarioStore
     @State private var selection: String?
+    @State private var showingGenerator = false
 
     var body: some View {
         NavigationSplitView {
@@ -16,8 +18,31 @@ struct ContentView: View {
                         }
                     }
                 }
+                if !store.downloaded.isEmpty {
+                    Section("Downloaded") {
+                        ForEach(store.downloaded) { scenario in
+                            Label(scenario.title, systemImage: scenario.category.symbol)
+                                .tag(Optional(scenario.id))
+                        }
+                    }
+                }
+                if !store.generated.isEmpty {
+                    Section("Written by Claude") {
+                        ForEach(store.generated) { scenario in
+                            Label(scenario.title, systemImage: "sparkles")
+                                .tag(Optional(scenario.id))
+                                .contextMenu {
+                                    Button("Delete", role: .destructive) {
+                                        if selection == scenario.id { selection = nil }
+                                        store.deleteGenerated(id: scenario.id)
+                                    }
+                                }
+                        }
+                    }
+                }
             }
             .navigationSplitViewColumnWidth(min: 230, ideal: 270)
+            .safeAreaInset(edge: .bottom) { sidebarActions }
         } detail: {
             detail
         }
@@ -28,7 +53,7 @@ struct ContentView: View {
             // Test hook used by CI's UI smoke test: RT_AUTOSTART=<scenario id>.
             if let id = ProcessInfo.processInfo.environment["RT_SELECT"] { selection = id }
             if let id = ProcessInfo.processInfo.environment["RT_AUTOSTART"],
-               let scenario = ScenarioLibrary.scenario(id: id) {
+               let scenario = store.scenario(id: id) {
                 selection = id
                 model.start(scenario)
             }
@@ -46,11 +71,51 @@ struct ContentView: View {
         }
     }
 
+    private var sidebarActions: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            if let message = store.statusMessage {
+                Text(message)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .onTapGesture { store.statusMessage = nil }
+            }
+            Button {
+                showingGenerator = true
+            } label: {
+                Label("New scenario with Claude…", systemImage: "sparkles")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.borderedProminent)
+            Button {
+                Task { await store.checkForUpdates() }
+            } label: {
+                if store.isChecking {
+                    HStack(spacing: 6) {
+                        ProgressView().controlSize(.small)
+                        Text("Checking…")
+                    }
+                    .frame(maxWidth: .infinity)
+                } else {
+                    Label("Check for new scenarios", systemImage: "arrow.down.circle")
+                        .frame(maxWidth: .infinity)
+                }
+            }
+            .disabled(store.isChecking)
+        }
+        .padding(12)
+        .background(.bar)
+        .sheet(isPresented: $showingGenerator) {
+            GenerateScenarioView { id in selection = id }
+                .environmentObject(store)
+        }
+    }
+
     @ViewBuilder private var detail: some View {
         if let session = model.session, session.scenario.id == selection {
             SessionView(session: session)
                 .id(ObjectIdentifier(session))
-        } else if let id = selection, let scenario = ScenarioLibrary.scenario(id: id) {
+        } else if let id = selection, let scenario = store.scenario(id: id) {
             ScenarioIntroView(scenario: scenario)
         } else {
             WelcomeView()

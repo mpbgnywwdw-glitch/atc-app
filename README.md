@@ -34,6 +34,17 @@ Numbers are compared by value, so the recogniser can write "1013", "one zero one
 The callsign, runway, wind, QNH, squawk and ATIS letter are randomised on every run. You can set your own registration and aircraft type in **Settings** (⌘,).
 Bramley, Ashwell, Hadley, Westbury and Northfield are fictional, so nobody mistakes their frequencies for real ones.
 
+## More scenarios
+
+There are two ways to get scenarios beyond the built-in ones. Both appear in the sidebar, and every scenario is checked by the app before it's added: each example call has to pass its own checks across many random flights, so a broken scenario never marks you wrong unfairly.
+
+- **Check for new scenarios** (sidebar button, or File › Check for New Scenarios) downloads the scenario packs published in [`scenario-packs/`](scenario-packs) of this repository. This is free and needs no account. New packs are added on request, for example by asking Claude Code to write some.
+- **New scenario with Claude…** asks Claude to write a fresh scenario on demand. You can describe what you want ("a MATZ crossing in poor weather with a frequency change") or leave it to Claude. This needs your own Anthropic API key from [console.anthropic.com](https://console.anthropic.com/settings/keys), entered in the sheet or in Settings and stored in your Keychain. Each scenario is one or two paid API requests (model `claude-opus-5-5`). Scenarios written by Claude stay on your Mac; right-click one to delete it.
+
+### Scenario file format
+
+Scenarios are JSON files (see [`scenario-packs/go-around.json`](scenario-packs/go-around.json)). Text can use placeholders such as `{cs}`, `{ab}`, `{rw}`, `{qnh}`, `{squawk}` and `{atis}`, which are filled from the randomised flight. The full list is `Template.placeholders` in `Sources/RTCore/ScenarioDefinition.swift`. To publish a scenario, add its file to `scenario-packs/` and list it in `index.json`. `make test` validates every published scenario.
+
 ## Requirements
 
 - macOS 13 Ventura or later

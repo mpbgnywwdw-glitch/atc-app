@@ -13,6 +13,7 @@ enum Prefs {
     static let onDeviceRecognition = "onDeviceRecognition"
     static let registration = "registration"
     static let aircraftType = "aircraftType"
+    static let packURL = "scenarioPackURL"
 
     static func register() {
         UserDefaults.standard.register(defaults: [
@@ -23,6 +24,7 @@ enum Prefs {
             onDeviceRecognition: true,
             registration: "",
             aircraftType: "",
+            packURL: "",
         ])
     }
 }
@@ -31,6 +33,7 @@ enum Prefs {
 final class AppModel: ObservableObject {
     let voice = ATCVoice()
     let recognizer = RadioRecognizer()
+    let store = ScenarioStore()
     @Published var session: TrainingSession?
     @Published var permissionError: String?
 
@@ -71,6 +74,7 @@ struct ATCTrainerApp: App {
         WindowGroup("RT Trainer") {
             ContentView()
                 .environmentObject(model)
+                .environmentObject(model.store)
                 .frame(minWidth: 900, minHeight: 600)
                 .task {
                     NSApplication.shared.activate(ignoringOtherApps: true)
@@ -93,11 +97,17 @@ struct ATCTrainerApp: App {
         .defaultSize(width: 1240, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {}
+            CommandGroup(after: .newItem) {
+                Button("Check for New Scenarios") {
+                    Task { await model.store.checkForUpdates() }
+                }
+            }
         }
 
         Settings {
             SettingsView()
                 .environmentObject(model)
+                .environmentObject(model.store)
         }
     }
 }
