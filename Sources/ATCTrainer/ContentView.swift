@@ -5,7 +5,6 @@ struct ContentView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var store: ScenarioStore
     @State private var selection: String?
-    @State private var showingGenerator = false
 
     var body: some View {
         NavigationSplitView {
@@ -23,20 +22,6 @@ struct ContentView: View {
                         ForEach(store.downloaded) { scenario in
                             Label(scenario.title, systemImage: scenario.category.symbol)
                                 .tag(Optional(scenario.id))
-                        }
-                    }
-                }
-                if !store.generated.isEmpty {
-                    Section("Written by Claude") {
-                        ForEach(store.generated) { scenario in
-                            Label(scenario.title, systemImage: "sparkles")
-                                .tag(Optional(scenario.id))
-                                .contextMenu {
-                                    Button("Delete", role: .destructive) {
-                                        if selection == scenario.id { selection = nil }
-                                        store.deleteGenerated(id: scenario.id)
-                                    }
-                                }
                         }
                     }
                 }
@@ -81,13 +66,6 @@ struct ContentView: View {
                     .onTapGesture { store.statusMessage = nil }
             }
             Button {
-                showingGenerator = true
-            } label: {
-                Label("New scenario with Claude…", systemImage: "sparkles")
-                    .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.borderedProminent)
-            Button {
                 Task { await store.checkForUpdates() }
             } label: {
                 if store.isChecking {
@@ -101,14 +79,11 @@ struct ContentView: View {
                         .frame(maxWidth: .infinity)
                 }
             }
+            .buttonStyle(.borderedProminent)
             .disabled(store.isChecking)
         }
         .padding(12)
         .background(.bar)
-        .sheet(isPresented: $showingGenerator) {
-            GenerateScenarioView { id in selection = id }
-                .environmentObject(store)
-        }
     }
 
     @ViewBuilder private var detail: some View {

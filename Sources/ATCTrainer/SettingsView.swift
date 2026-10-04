@@ -12,7 +12,6 @@ struct SettingsView: View {
     @AppStorage(Prefs.registration) private var registration = ""
     @AppStorage(Prefs.aircraftType) private var aircraftType = ""
     @AppStorage(Prefs.packURL) private var packURL = ""
-    @State private var apiKey = Keychain.read(ScenarioGenerator.keychainAccount) ?? ""
 
     private let voices = ATCVoice.britishVoices
 
@@ -60,23 +59,7 @@ struct SettingsView: View {
                 }
             }
 
-            Section("New scenarios") {
-                SecureField("Anthropic API key", text: $apiKey)
-                    .onSubmit { Keychain.save(apiKey.trimmingCharacters(in: .whitespacesAndNewlines), account: ScenarioGenerator.keychainAccount) }
-                HStack {
-                    Button("Save key") {
-                        Keychain.save(apiKey.trimmingCharacters(in: .whitespacesAndNewlines), account: ScenarioGenerator.keychainAccount)
-                    }
-                    Button("Remove key", role: .destructive) {
-                        apiKey = ""
-                        Keychain.delete(ScenarioGenerator.keychainAccount)
-                    }
-                    Spacer()
-                    Link("Get a key", destination: URL(string: "https://console.anthropic.com/settings/keys")!)
-                }
-                Text("Used by \"New scenario with Claude\". Each scenario is one or two paid requests to Claude on your Anthropic account. The key is stored in your Mac's Keychain.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            Section("Scenario packs") {
                 TextField("Scenario pack address", text: $packURL, prompt: Text("Default (RT Trainer on GitHub)"))
                 Text("Where \"Check for new scenarios\" downloads from. Leave blank for the default.")
                     .font(.caption)
