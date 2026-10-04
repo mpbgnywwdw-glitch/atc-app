@@ -24,6 +24,14 @@ struct ContentView: View {
         .onChange(of: selection) { _ in
             if model.session?.scenario.id != selection { model.endSession() }
         }
+        .task {
+            // Test hook used by CI's UI smoke test: RT_AUTOSTART=<scenario id>.
+            if let id = ProcessInfo.processInfo.environment["RT_AUTOSTART"],
+               let scenario = ScenarioLibrary.scenario(id: id) {
+                selection = id
+                model.start(scenario)
+            }
+        }
         .alert("Permissions needed", isPresented: Binding(get: { model.permissionError != nil },
                                                           set: { if !$0 { model.permissionError = nil } })) {
             Button("Open System Settings") {

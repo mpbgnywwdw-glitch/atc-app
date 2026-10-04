@@ -81,14 +81,17 @@ final class TrainingSession: ObservableObject {
 
     private func enterStep() async {
         guard let step = currentStep else {
+            appLog.notice("Scenario finished")
             phase = .finished
             return
         }
+        appLog.notice("Entering step \(self.index, privacy: .public)")
         lastAnalysis = nil
         if let atc = step.atc {
             log.append(LogEntry(stepIndex: index, speaker: .atc(step.station), text: atc))
             phase = .atcSpeaking
             await voice.speak(atc)
+            appLog.notice("ATC finished speaking step \(self.index, privacy: .public)")
             guard currentStep?.id == step.id, phase == .atcSpeaking else { return }
         }
         if step.task == nil {

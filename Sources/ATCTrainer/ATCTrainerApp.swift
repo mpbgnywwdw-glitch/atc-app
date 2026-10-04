@@ -1,6 +1,9 @@
 import AppKit
+import OSLog
 import RTCore
 import SwiftUI
+
+let appLog = Logger(subsystem: "uk.rttrainer.ATCTrainer", category: "app")
 
 enum Prefs {
     static let voiceRate = "atcVoiceRate"
@@ -42,6 +45,7 @@ final class AppModel: ObservableObject {
         let context = FlightContext.random(
             registration: defaults.string(forKey: Prefs.registration),
             aircraft: typeCode.isEmpty ? nil : AircraftType.named(typeCode))
+        appLog.notice("Starting scenario \(scenario.id, privacy: .public) as \(context.registration, privacy: .public)")
         let session = TrainingSession(scenario: scenario, context: context, voice: voice, recognizer: recognizer)
         self.session = session
         session.start()
@@ -70,7 +74,9 @@ struct ATCTrainerApp: App {
                 .frame(minWidth: 1000, minHeight: 640)
                 .task {
                     NSApplication.shared.activate(ignoringOtherApps: true)
-                    await model.requestPermissions()
+                    if ProcessInfo.processInfo.environment["RT_SKIP_PERMISSIONS"] == nil {
+                        await model.requestPermissions()
+                    }
                 }
         }
         .defaultSize(width: 1240, height: 800)
