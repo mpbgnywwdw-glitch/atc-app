@@ -1,0 +1,227 @@
+{
+  "id": "pack-zone-transit",
+  "category": "enRoute",
+  "title": "Class D zone transit",
+  "summary": "Request and read back a VFR transit of the Bramley control zone, then report leaving.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Route",
+      "value": "Ashwell to Hadley, VFR, through the Bramley CTR"
+    },
+    {
+      "label": "Position",
+      "value": "10 nm south of Bramley, 2,000 ft on QNH {qnhValue}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "Your route from Ashwell to Hadley crosses the Bramley control zone (Class D). Call Bramley Approach on 126.505 and ask for a zone transit.",
+      "model": "Bramley Approach, {cs}, request zone transit.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Zone transit",
+          "value": "",
+          "patterns": [
+            "zone transit|transit|cross the zone|crossing"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "{cs}, Bramley Approach, pass your message.",
+      "task": "Pass your message: type, from Ashwell to Hadley, 10 miles south of Bramley, 2,000 feet on QNH {qnhValue}, VFR, request zone transit.",
+      "model": "{cs}, {type}, from Ashwell to Hadley, one zero miles south of Bramley, two thousand feet, QNH {qnh}, VFR, request zone transit.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "ashwell.*hadley|hadley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Flight rules (VFR)",
+          "value": "",
+          "patterns": [
+            "vfr"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request zone transit",
+          "value": "",
+          "patterns": [
+            "zone transit|transit"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{cs}, squawk {squawk}.",
+      "task": "",
+      "model": "Squawk {squawk}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, identified, cleared to transit the Bramley control zone from south to north, VFR, not above altitude two thousand feet, QNH {qnh}.",
+      "task": "Read back the zone clearance.",
+      "model": "Cleared to transit the control zone south to north, VFR, not above altitude two thousand feet, QNH {qnh}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to transit",
+          "value": "",
+          "patterns": [
+            "cleared"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Route (south to north)",
+          "value": "",
+          "patterns": [
+            "south to north"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "VFR",
+          "value": "",
+          "patterns": [
+            "vfr"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Not above two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "You've left the zone to the north. Report leaving.",
+      "model": "{ab}, leaving the zone to the north.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Leaving the zone",
+          "value": "",
+          "patterns": [
+            "leaving|clear of"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, squawk seven thousand, frequency change approved.",
+      "task": "",
+      "model": "Squawk seven thousand, {ab}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk seven thousand",
+          "value": "7000",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

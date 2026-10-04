@@ -1,0 +1,219 @@
+{
+  "id": "pack-go-around",
+  "category": "controlled",
+  "title": "Go-around and second approach",
+  "summary": "An instructed go-around from final at Bramley, then a second circuit to land.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Circuit",
+      "value": "Runway {runway} · {Circuit}-hand · QNH {qnhValue} · 1,000 ft"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on the downwind leg at Bramley and intend to land. Make your downwind call.",
+      "model": "{cs}, downwind to land.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (to land)",
+          "value": "",
+          "patterns": [
+            "land|full stop"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, number one, report final.",
+      "task": "You're turning final. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, go around, I say again, go around, acknowledge.",
+      "task": "Acknowledge the go-around instruction.",
+      "model": "Going around, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Going around",
+          "value": "",
+          "patterns": [
+            "going around|go around"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, vehicle on the runway, climb straight ahead to one thousand feet, report downwind.",
+      "task": "",
+      "model": "Straight ahead, climbing to one thousand feet, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Straight ahead",
+          "value": "",
+          "patterns": [
+            "straight ahead"
+          ],
+          "required": false
+        },
+        {
+          "type": "altitude",
+          "label": "Climb to one thousand feet",
+          "value": "1000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco (report downwind)",
+          "value": "",
+          "patterns": [
+            "wilco|report downwind"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're back on the downwind leg. Report downwind.",
+      "model": "{ab}, downwind.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "{ab}, runway now clear, number one, report final.",
+      "task": "You're on final again. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, runway {rw}, cleared to land, surface wind {wind}.",
+      "task": "Read back the landing clearance.",
+      "model": "Cleared to land, runway {rw}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to land",
+          "value": "",
+          "patterns": [
+            "cleared to land|clear to land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, vacate left at Charlie.",
+      "task": "",
+      "model": "Vacate left at Charlie, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Vacate",
+          "value": "",
+          "patterns": [
+            "vacate|vacating"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "At Charlie",
+          "value": "",
+          "patterns": [
+            "at c|via c|left c"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

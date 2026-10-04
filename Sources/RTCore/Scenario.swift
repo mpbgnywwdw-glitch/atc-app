@@ -98,6 +98,10 @@ public struct Caution: Hashable, Sendable {
         "takeoff", title: "Don't say \"take-off\" here",
         detail: "Use \"ready for departure\". The words \"take-off\" are only used when a take-off clearance is given, cancelled or read back.")
 
+    public static let lineUpOnly = Caution(
+        "takeoff", title: "You haven't been cleared for take-off",
+        detail: "This was a line-up instruction only. Don't use the word \"take-off\" until you are cleared.")
+
     public static let noClearances = Caution(
         "cleared", title: "No clearance is given at this aerodrome",
         detail: "AFIS and Air/Ground stations don't issue clearances in the air, so don't read one back or ask for one.")
@@ -192,6 +196,21 @@ public enum ScenarioCategory: String, CaseIterable, Sendable {
     case uncontrolled = "AFIS & Air/Ground"
     case enRoute = "En route services"
     case emergency = "Emergencies"
+
+    /// Stable identifier used in scenario JSON files.
+    public var key: String {
+        switch self {
+        case .controlled: return "controlled"
+        case .uncontrolled: return "uncontrolled"
+        case .enRoute: return "enRoute"
+        case .emergency: return "emergency"
+        }
+    }
+
+    public init?(key: String) {
+        guard let match = Self.allCases.first(where: { $0.key == key }) else { return nil }
+        self = match
+    }
 }
 
 public struct Scenario: Identifiable, Sendable {

@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "scenarios": [
+    "go-around.json",
+    "ground-tower-conditional.json",
+    "practice-pan.json",
+    "zone-transit.json"
+  ]
+}

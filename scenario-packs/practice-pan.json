@@ -1,0 +1,184 @@
+{
+  "id": "pack-practice-pan",
+  "category": "emergency",
+  "title": "PRACTICE PAN: training fix",
+  "summary": "Practise an urgency call with London Centre on 121.500 and follow their steer.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Frequency",
+      "value": "London Centre 121.500"
+    },
+    {
+      "label": "Situation",
+      "value": "Uncertain of position at 3,000 ft, heading 090"
+    },
+    {
+      "label": "You",
+      "value": "PPL holder, {pobValue} POB"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "emergency",
+      "station": "London Centre",
+      "atc": "",
+      "task": "You're uncertain of your position at 3,000 feet, heading 090. Make a PRACTICE PAN to London Centre on 121.500 and ask for a training fix. Include type, the problem, altitude, heading, qualification and persons on board.",
+      "model": "Practice Pan, Practice Pan, Practice Pan, London Centre, {cs}, {type}, uncertain of position, three thousand feet, heading zero niner zero, PPL holder, {pob} persons on board, request training fix.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "PRACTICE PAN ×3",
+          "value": "",
+          "patterns": [
+            "practice pan practice pan practice pan"
+          ],
+          "required": true
+        },
+        {
+          "type": "station",
+          "label": "Station called (London Centre)",
+          "value": "London Centre",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Nature of the problem",
+          "value": "",
+          "patterns": [
+            "uncertain of (my )?position|unsure of (my )?position|lost"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude three thousand feet",
+          "value": "3000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Heading zero niner zero",
+          "value": "",
+          "patterns": [
+            "0?90"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Pilot qualification",
+          "value": "",
+          "patterns": [
+            "ppl|private pilot|student|licence|qualification"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Persons on board",
+          "value": "",
+          "patterns": [
+            "pob|on board|persons|people|souls"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request training fix",
+          "value": "",
+          "patterns": [
+            "training fix|fix|assistance"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Centre",
+      "atc": "Practice Pan {cs}, London Centre, roger, squawk {squawk}.",
+      "task": "",
+      "model": "Squawk {squawk}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Centre",
+      "atc": "{cs}, identified, you are eight miles south of Ashwell, steer heading three six zero for Ashwell.",
+      "task": "",
+      "model": "Eight miles south of Ashwell, heading three six zero, {cs}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Heading three six zero",
+          "value": "360",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|ashwell"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Centre",
+      "atc": "{cs}, practice complete, squawk seven thousand, resume own navigation.",
+      "task": "",
+      "model": "Squawk seven thousand, resuming own navigation, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk seven thousand",
+          "value": "7000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Resume own navigation",
+          "value": "",
+          "patterns": [
+            "own navigation"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

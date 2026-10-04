@@ -1,0 +1,251 @@
+{
+  "id": "pack-ground-tower-conditional",
+  "category": "controlled",
+  "title": "Ground to Tower with a conditional clearance",
+  "summary": "Taxi with Bramley Ground, change to Tower, and read back a conditional line-up clearance.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Ground",
+      "value": "121.780"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "ATIS",
+      "value": "Information {atisLetter} · runway {runway} · QNH {qnhValue} · wind {windText}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Ground",
+      "atc": "",
+      "task": "You're at the flying club with information {atis}. Call Bramley Ground on 121.780 and request taxi for a VFR flight to the west.",
+      "model": "Bramley Ground, {cs}, {type}, at the flying club, information {atis}, request taxi for a VFR flight to the west.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Ground)",
+          "value": "Bramley Ground",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "ATIS information {atis}",
+          "value": "",
+          "patterns": [
+            "information {atisLower}",
+            "info {atisLower}"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request taxi",
+          "value": "",
+          "patterns": [
+            "taxi"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, Bramley Ground, taxi to holding point Alpha One via Bravo, runway {rw}, QNH {qnh}.",
+      "task": "",
+      "model": "Taxi holding point Alpha One via Bravo, runway {rw}, QNH {qnh}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Holding point Alpha One",
+          "value": "",
+          "patterns": [
+            "a 1"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Via Bravo",
+          "value": "",
+          "patterns": [
+            "via b"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Ground",
+      "atc": "{ab}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're at holding point Alpha One with checks complete. Call Bramley Tower and tell them you're ready.",
+      "model": "Bramley Tower, {ab}, holding point Alpha One, ready for departure.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Ready for departure",
+          "value": "",
+          "patterns": [
+            "ready"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, after the landing Cessna on short final, line up and wait runway {rw}, after.",
+      "task": "Read back the conditional clearance. The condition comes first.",
+      "model": "After the landing Cessna, line up and wait runway {rw}, after, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Condition (after the landing Cessna)",
+          "value": "",
+          "patterns": [
+            "after the landing (cessna|traffic|aircraft)"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Line up and wait",
+          "value": "",
+          "patterns": [
+            "line up and wait|line up wait"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "lineUpOnly"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, surface wind {wind}, runway {rw}, cleared for take-off.",
+      "task": "Read back the take-off clearance.",
+      "model": "Runway {rw}, cleared for take-off, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared for take-off",
+          "value": "",
+          "patterns": [
+            "cleared for takeoff|cleared takeoff|clear for takeoff"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, report leaving the zone to the west.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Bramley Tower",
+      "atc": "{ab}, roger.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}
