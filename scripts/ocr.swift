@@ -10,7 +10,15 @@ print("image \(cg.width)x\(cg.height)")
 let request = VNRecognizeTextRequest()
 request.recognitionLevel = .accurate
 try VNImageRequestHandler(cgImage: cg).perform([request])
-let lines = (request.results ?? []).map { o -> (CGFloat, CGFloat, String) in
-    (1 - o.boundingBox.maxY, o.boundingBox.minX, o.topCandidates(1).first?.string ?? "")
-}.sorted { ($0.0 * 50).rounded() == ($1.0 * 50).rounded() ? $0.1 < $1.1 : $0.0 < $1.0 }
-for (y, x, text) in lines { print(String(format: "y=%.2f x=%.2f  ", y, x) + text) }
+struct Line { let y: Double; let x: Double; let text: String }
+var lines: [Line] = []
+for o in request.results ?? [] {
+    let box = o.boundingBox
+    let text = o.topCandidates(1).first?.string ?? ""
+    lines.append(Line(y: Double(1 - box.maxY), x: Double(box.minX), text: text))
+}
+lines.sort { a, b in
+    let ya = (a.y * 50).rounded(), yb = (b.y * 50).rounded()
+    return ya == yb ? a.x < b.x : a.y < b.y
+}
+for l in lines { print(String(format: "y=%.2f x=%.2f  ", l.y, l.x) + l.text) }
