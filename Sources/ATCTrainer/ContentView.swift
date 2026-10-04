@@ -26,6 +26,7 @@ struct ContentView: View {
         }
         .task {
             // Test hook used by CI's UI smoke test: RT_AUTOSTART=<scenario id>.
+            if let id = ProcessInfo.processInfo.environment["RT_SELECT"] { selection = id }
             if let id = ProcessInfo.processInfo.environment["RT_AUTOSTART"],
                let scenario = ScenarioLibrary.scenario(id: id) {
                 selection = id

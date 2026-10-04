@@ -16,22 +16,27 @@ struct SessionView: View {
         _recognizer = ObservedObject(wrappedValue: session.recognizerForUI)
     }
 
+    // Temporary diagnostic switch for the CI smoke test (RT_VARIANT=no<part>).
+    private let variant = ProcessInfo.processInfo.environment["RT_VARIANT"] ?? ""
+
     var body: some View {
         HStack(spacing: 0) {
             VStack(spacing: 0) {
-                BriefingBar(items: session.script.briefing)
+                if variant != "nobriefing" { BriefingBar(items: session.script.briefing) }
                 Divider()
                 if session.phase == .finished {
                     DebriefView(session: session) { model.start(session.scenario) }
                 } else {
-                    transcript
+                    if variant != "notranscript" { transcript }
                     Divider()
-                    controls
+                    if variant != "nocontrols" { controls }
                 }
             }
             Divider()
-            FeedbackColumn(session: session)
-                .frame(width: 360)
+            if variant != "nofeedback" {
+                FeedbackColumn(session: session)
+                    .frame(width: 360)
+            }
         }
         .navigationTitle(session.scenario.title)
         .onAppear(perform: installKeyMonitor)
