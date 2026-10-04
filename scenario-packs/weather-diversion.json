@@ -196,7 +196,7 @@
           "label": "Diverting",
           "value": "",
           "patterns": [
-            "divert"
+            "divert(ing)?"
           ],
           "required": false
         },
