@@ -24,3 +24,7 @@ cp ~/Library/Logs/DiagnosticReports/ATCTrainer* "$OUT/" 2>/dev/null || true
 echo "--- stdout/stderr"; cat "$OUT/stdout.txt"
 echo "--- os log"; cat "$OUT/oslog.txt"
 
+
+for f in "$OUT"/screen-*.png; do
+  echo "--- OCR $f"; swift scripts/ocr.swift "$f" || true
+done
