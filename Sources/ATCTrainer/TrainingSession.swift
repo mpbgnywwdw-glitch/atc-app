@@ -71,12 +71,14 @@ final class TrainingSession: ObservableObject {
         index = 0
         log = []
         results = [:]
+        // Open the mic now so the first word of each call isn't clipped while it starts up.
+        try? recognizer.beginMonitoring()
         Task { await enterStep() }
     }
 
     func end() {
         voice.stop()
-        recognizer.cancel()
+        recognizer.endMonitoring()
     }
 
     private func enterStep() async {

@@ -34,6 +34,20 @@ final class NormalizerTests: XCTestCase {
         XCTAssertEqual(Normalizer.canonical("holding point A1"), "holding point a 1")
         XCTAssertEqual(Normalizer.canonical("Golf CD, wilco."), "g c d wilco")
     }
+
+    func testCommonMishearings() {
+        XCTAssertEqual(Normalizer.canonical("will co golf charlie delta"), "wilco g c d")
+        XCTAssertEqual(Normalizer.canonical("runway to six"), "runway 26")
+        XCTAssertEqual(Normalizer.canonical("Q and H one zero one for"), "qnh 1014")
+        XCTAssertEqual(Normalizer.canonical("queue NH one oh one three"), "qnh 1013")
+        XCTAssertEqual(Normalizer.canonical("squak four five two one"), "squawk 4521")
+        XCTAssertEqual(Normalizer.canonical("Pam Pam Pam Pam"), "pan pan pan pan")
+        // Real uses of "to"/"for" are left alone.
+        XCTAssertEqual(Normalizer.canonical("cleared to land"), "cleared to land")
+        XCTAssertEqual(Normalizer.canonical("descending to two thousand feet"), "descending to 2000 feet")
+        XCTAssertEqual(Normalizer.canonical("ready for departure"), "ready for departure")
+        XCTAssertEqual(Normalizer.canonical("changing to London Information"), "changing to london information")
+    }
 }
 
 final class PhoneticTests: XCTestCase {

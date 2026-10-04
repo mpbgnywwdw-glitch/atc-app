@@ -36,7 +36,24 @@ public enum Normalizer {
             let w = wordMap[String(word)] ?? String(word)
             return phoneticLetters[w] ?? w
         }
-        return groupNumbers(words)
+        return groupNumbers(fixDigitHomophones(words))
+    }
+
+    /// Replaces digit homophones only where a number is clearly meant: after a designator or another digit,
+    /// and before a digit (or at the end of the transmission).
+    static func fixDigitHomophones(_ words: [String]) -> [String] {
+        var out = words
+        for i in words.indices {
+            guard let digit = digitHomophones[words[i]] else { continue }
+            let prev = i > 0 ? out[i - 1] : ""
+            let next = i + 1 < words.count ? words[i + 1] : ""
+            let prevIsNumber = isNumberWord(prev) || numberDesignators.contains(prev)
+            let nextIsDigit = digitWords[next] != nil || isNumeral(next) || digitHomophones[next] != nil
+            if prevIsNumber && (nextIsDigit || next.isEmpty || next == separator) {
+                out[i] = digit
+            }
+        }
+        return out
     }
 
     // MARK: - Tables
@@ -54,6 +71,27 @@ public enum Normalizer {
         ("\\bfree[- ]call\\b", "freecall"),
         ("\\bmat'?s\\b|\\bmattz\\b", "matz"),
         ("\\bp\\.?o\\.?b\\b", "pob"),
+        // Common speech-recognition mishearings of RT words.
+        ("\\bwill ?co\\b|\\bwilko\\b|\\bwilcox\\b|\\bwillco\\b", "wilco"),
+        ("\\bsquak\\b|\\bsquark\\b|\\bsquawks\\b|\\bsquawking\\b|\\bsquawked\\b", "squawk"),
+        ("\\b(?:queue|cue) ?(?:n|and|an) ?h\\b|\\bq ?n ?age\\b", "qnh"),
+        ("\\b(?:queue|cue) ?f ?e\\b", "qfe"),
+        ("\\bpam ?pam\\b|\\bpan ?am\\b", "pan pan"),
+        ("\\ba firm\\b", "affirm"),
+        ("\\bnine ?er\\b|\\bniner's\\b", "niner"),
+        ("\\bgulf\\b", "golf"),
+        ("\\bdown ?wind\\b", "downwind"),
+        ("\\bline up in wait\\b|\\bline up and weight\\b", "line up and wait"),
+    ]
+
+    /// Words after which "to", "for", "oh" etc. are almost certainly misheard digits.
+    static let numberDesignators: Set<String> = [
+        "runway", "qnh", "qfe", "squawk", "heading", "pressure", "decimal", "point", "number", "flight", "level",
+    ]
+
+    /// Homophones of digits: "runway to six" → "runway two six", "one zero one for" → "one zero one four".
+    static let digitHomophones: [String: String] = [
+        "to": "two", "too": "two", "for": "four", "fore": "four", "won": "one", "oh": "zero", "ate": "eight",
     ]
 
     static let wordMap: [String: String] = [

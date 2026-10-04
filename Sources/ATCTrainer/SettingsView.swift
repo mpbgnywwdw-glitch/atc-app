@@ -59,8 +59,8 @@ struct SettingsView: View {
             }
 
             Section("Speech recognition") {
-                Toggle("Recognise on this Mac only (offline)", isOn: $onDevice)
-                Text("Used when on-device English (UK) recognition is available; otherwise Apple's server recognition is used.")
+                Toggle("Aviation-tuned recognition on this Mac (recommended)", isOn: $onDevice)
+                Text("Uses on-device English (UK) recognition with a language model trained on RT phraseology (macOS 14 or later). Turn off to use Apple's server recognition instead, which may do better with a strong accent.")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

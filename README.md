@@ -59,6 +59,8 @@ A zipped app is also attached to each CI run as the `RT-Trainer-app` artifact. B
 
 ### Tips
 
+- **Speech recognition:** on macOS 14+ the app builds an on-device language model trained on RT phraseology the first time it runs, which takes about a minute in the background. The microphone stays open while a scenario is running (you'll see the orange mic indicator), so the first word of each call isn't clipped. Recording continues for half a second after you release Space. If recognition is still poor with your accent, try turning off **Aviation-tuned recognition** in Settings to use Apple's server recognition.
+
 - For a more realistic controller, download an **enhanced/premium British voice**. Go to System Settings › Accessibility › Spoken Content › System Voice › Manage Voices, then pick it in Settings.
 - Turn off **Show ATC transmissions as text** to practise listening only.
 - Transmit "Say again" to have ATC repeat the last call.
