@@ -76,6 +76,10 @@ A zipped app is also attached to each CI run as the `RT-Trainer-app` artifact. B
 - Transmit "Say again" to have ATC repeat the last call.
 - After feedback, press **Return** to continue or hold **Space** to try the call again.
 
+## App icon
+
+The icon is drawn in [`Resources/AppIcon.svg`](Resources/AppIcon.svg). `Resources/AppIcon.png` is rendered from it with `node scripts/render-icon.js` (needs Playwright with Chromium), and `scripts/build-app.sh` turns the PNG into the `.icns` the app uses. To use a different icon, replace `Resources/AppIcon.png` with any 1024×1024 PNG and rebuild.
+
 ## Project layout
 
 ```

@@ -15,6 +15,8 @@ jobs:
         run: swift test
       - name: Build app bundle
         run: scripts/build-app.sh
+      - name: Check app icon
+        run: test -s "build/RT Trainer.app/Contents/Resources/AppIcon.icns" && file "build/RT Trainer.app/Contents/Resources/AppIcon.icns"
       - name: Zip app
         run: cd build && ditto -c -k --keepParent "RT Trainer.app" RT-Trainer.zip
       - uses: actions/upload-artifact@v4

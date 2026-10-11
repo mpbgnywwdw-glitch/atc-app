@@ -8,6 +8,8 @@
 	<string>RT Trainer</string>
 	<key>CFBundleExecutable</key>
 	<string>ATCTrainer</string>
+	<key>CFBundleIconFile</key>
+	<string>AppIcon</string>
 	<key>CFBundleIdentifier</key>
 	<string>uk.rttrainer.ATCTrainer</string>
 	<key>CFBundleInfoDictionaryVersion</key>
