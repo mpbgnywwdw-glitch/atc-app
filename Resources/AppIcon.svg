@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- RT Trainer app icon. Rendered to AppIcon.png (scripts/render-icon.mjs); build-app.sh makes the .icns. -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0A1A3F"/>
+      <stop offset="0.62" stop-color="#1C4FA8"/>
+      <stop offset="1" stop-color="#3B7BE0"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.98" r="0.55">
+      <stop offset="0" stop-color="#FFC163" stop-opacity="0.55"/>
+      <stop offset="1" stop-color="#FFC163" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="runway" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A3446"/>
+      <stop offset="1" stop-color="#151B26"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#D7DEEA"/>
+    </linearGradient>
+    <clipPath id="tile">
+      <rect x="100" y="100" width="824" height="824" rx="186"/>
+    </clipPath>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="125%">
+      <feDropShadow dx="0" dy="12" stdDeviation="14" flood-color="#000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="soft" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#04102B" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#shadow)">
+    <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#sky)"/>
+  </g>
+
+  <g clip-path="url(#tile)">
+    <rect x="100" y="100" width="824" height="824" fill="url(#glow)"/>
+    <!-- Runway in perspective -->
+    <polygon points="452,668 572,668 760,924 264,924" fill="url(#runway)"/>
+    <polygon points="452,668 572,668 760,924 264,924" fill="none" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="6"/>
+    <g fill="#FFFFFF" opacity="0.9">
+      <polygon points="508,690 516,690 518,716 506,716"/>
+      <polygon points="505,744 519,744 522,782 502,782"/>
+      <polygon points="501,820 523,820 527,880 497,880"/>
+    </g>
+    <!-- Threshold bars -->
+    <g fill="#FFFFFF" opacity="0.9">
+      <rect x="300" y="900" width="26" height="24"/><rect x="342" y="900" width="26" height="24"/>
+      <rect x="384" y="900" width="26" height="24"/><rect x="614" y="900" width="26" height="24"/>
+      <rect x="656" y="900" width="26" height="24"/><rect x="698" y="900" width="26" height="24"/>
+    </g>
+  </g>
+
+  <!-- Aviation headset -->
+  <g filter="url(#soft)">
+    <!-- Headband -->
+    <path d="M 324 500 C 324 252, 700 252, 700 500" fill="none" stroke="url(#metal)" stroke-width="46" stroke-linecap="round"/>
+    <path d="M 352 484 C 360 300, 664 300, 672 484" fill="none" stroke="#9FB0CC" stroke-width="10" stroke-linecap="round" opacity="0.55"/>
+    <!-- Ear cups -->
+    <rect x="262" y="468" width="124" height="178" rx="56" fill="url(#metal)"/>
+    <rect x="288" y="494" width="72" height="126" rx="34" fill="#1C2B47"/>
+    <rect x="638" y="468" width="124" height="178" rx="56" fill="url(#metal)"/>
+    <rect x="664" y="494" width="72" height="126" rx="34" fill="#1C2B47"/>
+    <!-- Boom microphone -->
+    <path d="M 324 640 C 324 730, 416 762, 484 748" fill="none" stroke="url(#metal)" stroke-width="20" stroke-linecap="round"/>
+    <rect x="472" y="722" width="84" height="50" rx="25" fill="#1C2B47" stroke="url(#metal)" stroke-width="12"/>
+  </g>
+
+  <!-- Radio waves from the microphone -->
+  <g fill="none" stroke="#FFC163" stroke-linecap="round" stroke-width="22">
+    <path d="M 580.1 707.4 A 60 60 0 0 1 580.1 796.6"/>
+    <path d="M 618.8 681.1 A 106 106 0 0 1 618.8 822.9" opacity="0.75"/>
+    <path d="M 661.4 663.8 A 150 150 0 0 1 661.4 840.2" opacity="0.5"/>
+  </g>
+</svg>
