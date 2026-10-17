@@ -2,13 +2,19 @@ import AppKit
 import RTCore
 import SwiftUI
 
+/// Default spring for UI state changes: critically damped (no overshoot), quick response.
+extension Animation {
+    static let ui = Animation.spring(response: 0.35, dampingFraction: 1)
+}
+
 struct SessionView: View {
     @EnvironmentObject private var model: AppModel
     @ObservedObject var session: TrainingSession
     @ObservedObject private var recognizer: RadioRecognizer
     @AppStorage(Prefs.showATCText) private var showATCText = true
+    @AppStorage("showFeedbackInspector") private var showInspector = true
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var keyMonitor: Any?
-    @State private var showModel = false
 
     init(session: TrainingSession) {
         _session = ObservedObject(wrappedValue: session)
@@ -17,28 +23,26 @@ struct SessionView: View {
     }
 
     var body: some View {
-        HStack(spacing: 0) {
-            VStack(spacing: 0) {
-                BriefingBar(items: session.script.briefing)
-                Divider()
-                if session.phase == .finished {
-                    DebriefView(session: session) { model.start(session.scenario) }
-                } else {
-                    transcript
-                    Divider()
-                    controls
-                }
+        Group {
+            if session.phase == .finished {
+                DebriefView(session: session,
+                            onRestart: { model.start(session.scenario) },
+                            onClose: { model.endSession() })
+            } else {
+                conversation
             }
-            .frame(minWidth: 420, maxWidth: .infinity, maxHeight: .infinity)
-            Divider()
-            FeedbackColumn(session: session)
-                .frame(width: 320)
         }
-        .toolbar { toolbarButtons }
+        .frame(minWidth: 380, maxWidth: .infinity, maxHeight: .infinity)
+        .inspector(isPresented: $showInspector) {
+            FeedbackColumn(session: session)
+                .inspectorColumnWidth(min: 260, ideal: 320, max: 440)
+        }
+        .toolbar { toolbarContent }
         .navigationTitle(session.scenario.title)
+        .navigationSubtitle(subtitle)
+        .focusedSceneObject(session)
         .onAppear(perform: installKeyMonitor)
         .onDisappear(perform: removeKeyMonitor)
-        .onChange(of: session.index) { _ in showModel = false }
         .alert("Can't transmit", isPresented: Binding(get: { session.errorMessage != nil },
                                                       set: { if !$0 { session.errorMessage = nil } })) {
             Button("OK", role: .cancel) {}
@@ -47,135 +51,168 @@ struct SessionView: View {
         }
     }
 
-    // MARK: Transcript
+    private var subtitle: String {
+        session.phase == .finished
+            ? "Debrief · \(session.context.registration)"
+            : "Call \(max(1, session.pilotStepNumber)) of \(session.script.pilotStepCount) · \(session.context.registration)"
+    }
 
-    private var transcript: some View {
+    private var entryTransition: AnyTransition {
+        reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity)
+    }
+
+    // MARK: Conversation
+
+    private var conversation: some View {
         ScrollViewReader { proxy in
             ScrollView {
-                LazyVStack(alignment: .leading, spacing: 12) {
-                    ForEach(session.log) { entry in
-                        LogBubble(entry: entry, hidden: session.isHidden(entry, showText: showATCText),
-                                  callsign: session.context.registration)
-                            .id(entry.id)
+                VStack(alignment: .leading, spacing: 20) {
+                    BriefingCard(items: session.script.briefing)
+                    LazyVStack(alignment: .leading, spacing: 14) {
+                        ForEach(session.log) { entry in
+                            LogBubble(entry: entry, hidden: session.isHidden(entry, showText: showATCText),
+                                      callsign: session.context.registration)
+                                .id(entry.id)
+                                .transition(entryTransition)
+                        }
+                        if session.phase == .recording {
+                            LiveBubble(text: recognizer.transcript)
+                                .id("live")
+                                .transition(.opacity)
+                        }
                     }
-                    if session.phase == .recording {
-                        LiveBubble(text: recognizer.transcript)
-                            .id("live")
-                    }
+                    .animation(reduceMotion ? nil : .ui, value: session.log.count)
+                    .animation(.ui, value: session.phase == .recording)
                 }
                 .padding(20)
             }
-            .onChange(of: session.log.count) { _ in
+            .onChange(of: session.log.count) {
                 if let last = session.log.last?.id {
-                    withAnimation { proxy.scrollTo(last, anchor: .bottom) }
+                    withAnimation(.ui) { proxy.scrollTo(last, anchor: .bottom) }
                 }
             }
-            .onChange(of: recognizer.transcript) { _ in
+            .onChange(of: recognizer.transcript) {
                 proxy.scrollTo("live", anchor: .bottom)
             }
         }
-        .frame(maxHeight: .infinity)
+        // The transmit bar floats over the transcript as a translucent layer.
+        .safeAreaInset(edge: .bottom, spacing: 0) { transmitBar }
     }
 
-    // MARK: Controls
+    // MARK: Transmit bar
 
-    private var controls: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
+    private var transmitBar: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(spacing: 10) {
+                ProgressView(value: Double(max(0, session.pilotStepNumber - (session.phase == .reviewing ? 0 : 1))),
+                             total: Double(max(1, session.script.pilotStepCount)))
+                    .progressViewStyle(.linear)
+                    .frame(maxWidth: 140)
                 Text("Call \(max(1, session.pilotStepNumber)) of \(session.script.pilotStepCount)")
-                    .font(.caption.weight(.semibold))
+                    .font(.caption.weight(.medium))
                     .foregroundStyle(.secondary)
                 Spacer()
-                statusLabel
+                StatusPill(phase: session.phase)
             }
 
-            if let task = session.currentStep?.task, session.phase != .atcSpeaking || session.currentStep?.atc == nil {
-                Text(task)
-                    .font(.title3)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            } else if session.phase == .atcSpeaking {
-                Text("Listen…")
-                    .font(.title3)
-                    .foregroundStyle(.secondary)
-            }
-
-            if showModel, let modelAnswer = session.currentStep?.model {
-                Text(modelAnswer)
-                    .font(.body.italic())
-                    .padding(10)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(RoundedRectangle(cornerRadius: 8).fill(Color.yellow.opacity(0.15)))
-            }
-
-            HStack(alignment: .center, spacing: 16) {
-                PTTButton(active: session.phase == .recording,
-                          enabled: [.awaitingPilot, .reviewing, .recording].contains(session.phase),
-                          level: recognizer.level,
-                          onDown: { session.pttDown() }, onUp: { session.pttUp() })
-
-                if session.phase == .reviewing {
-                    Button {
-                        session.next()
-                    } label: {
-                        Label("Continue", systemImage: "arrow.right.circle.fill")
+            HStack(alignment: .center, spacing: 24) {
+                VStack(alignment: .leading, spacing: 10) {
+                    Text(taskText)
+                        .font(.title3.weight(.medium))
+                        .foregroundStyle(session.phase == .atcSpeaking ? .secondary : .primary)
+                        .lineLimit(6)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    if session.showingExample, let example = session.currentStep?.model {
+                        Label {
+                            Text(example).textSelection(.enabled)
+                        } icon: {
+                            Image(systemName: "lightbulb.fill").foregroundStyle(.yellow)
+                        }
+                        .font(.callout)
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(.yellow.opacity(0.12), in: RoundedRectangle(cornerRadius: 10, style: .continuous))
+                        .transition(.opacity)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .keyboardShortcut(.return, modifiers: [])
-                    Text("or hold Space to try again")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
                 }
-                Spacer(minLength: 0)
+                .animation(.ui, value: session.showingExample)
+
+                VStack(spacing: 8) {
+                    PTTButton(active: session.phase == .recording,
+                              enabled: [.awaitingPilot, .reviewing, .recording].contains(session.phase),
+                              level: recognizer.level,
+                              onDown: { session.pttDown() }, onUp: { session.pttUp() })
+                    if session.phase == .reviewing {
+                        Button {
+                            session.next()
+                        } label: {
+                            Text("Continue")
+                                .frame(minWidth: 90)
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .keyboardShortcut(.return, modifiers: [])
+                        .help("Next call (Return). Hold Space to try this one again.")
+                    } else {
+                        Text("Hold to Talk")
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .frame(minWidth: 110)
             }
         }
-        .padding(20)
+        .padding(.horizontal, 20)
+        .padding(.vertical, 16)
         .background(.bar)
+        .overlay(alignment: .top) { Divider() }
     }
 
-    @ToolbarContentBuilder private var toolbarButtons: some ToolbarContent {
+    private var taskText: String {
+        if session.phase == .atcSpeaking, session.currentStep?.atc != nil { return "Listen…" }
+        return session.currentStep?.task ?? ""
+    }
+
+    // MARK: Toolbar
+
+    @ToolbarContentBuilder private var toolbarContent: some ToolbarContent {
         ToolbarItemGroup(placement: .primaryAction) {
             Button {
                 session.replayATC()
             } label: {
                 Label("Replay ATC", systemImage: "arrow.counterclockwise")
             }
-            .help("Replay the last ATC transmission")
-            .disabled(session.currentStep?.atc == nil || ![.awaitingPilot, .reviewing].contains(session.phase))
+            .help("Replay the last ATC transmission (⌘R)")
+            .disabled(!session.canReplay)
 
-            Button {
-                showModel.toggle()
-            } label: {
-                Label(showModel ? "Hide example" : "Show example", systemImage: "lightbulb")
+            Toggle(isOn: $session.showingExample) {
+                Label("Show Example", systemImage: "lightbulb")
             }
-            .help("Show an example of this call")
+            .help("Show an example of this call (⌘E)")
             .disabled(session.currentStep?.model == nil || session.phase == .finished)
 
             Button {
                 session.skip()
             } label: {
-                Label("Skip", systemImage: "forward")
+                Label("Skip Call", systemImage: "forward.end")
             }
-            .help("Skip this call")
+            .help("Skip this call (⌘K)")
             .disabled(session.phase == .finished)
-
+        }
+        ToolbarItem(placement: .primaryAction) {
             Button {
                 model.endSession()
             } label: {
-                Label("End", systemImage: "xmark.circle")
+                Label("End Scenario", systemImage: "xmark.circle")
             }
-            .help("End this scenario")
+            .help("End this scenario (⌘.)")
         }
-    }
-
-    @ViewBuilder private var statusLabel: some View {
-        switch session.phase {
-        case .ready: Label("Starting", systemImage: "hourglass").foregroundStyle(.secondary)
-        case .atcSpeaking: Label("ATC transmitting", systemImage: "speaker.wave.3.fill").foregroundStyle(.blue)
-        case .awaitingPilot: Label("Your call: hold Space", systemImage: "mic").foregroundStyle(.primary)
-        case .recording: Label("Transmitting", systemImage: "dot.radiowaves.left.and.right").foregroundStyle(.red)
-        case .analysing: Label("Analysing", systemImage: "waveform").foregroundStyle(.secondary)
-        case .reviewing: Label("Review your call", systemImage: "checkmark.bubble").foregroundStyle(.green)
-        case .finished: Label("Complete", systemImage: "flag.checkered").foregroundStyle(.green)
+        ToolbarItem(placement: .primaryAction) {
+            Button {
+                showInspector.toggle()
+            } label: {
+                Label("Feedback", systemImage: "sidebar.right")
+            }
+            .help(showInspector ? "Hide feedback" : "Show feedback")
         }
     }
 
@@ -185,7 +222,7 @@ struct SessionView: View {
         guard keyMonitor == nil else { return }
         keyMonitor = NSEvent.addLocalMonitorForEvents(matching: [.keyDown, .keyUp]) { event in
             guard event.keyCode == 49 else { return event } // space
-            // Let text fields (e.g. Settings) receive spaces normally.
+            // Let text fields (search, Settings) receive spaces normally.
             if let responder = event.window?.firstResponder, responder is NSText { return event }
             if event.type == .keyDown {
                 if !event.isARepeat { session.pttDown() }
@@ -204,27 +241,77 @@ struct SessionView: View {
 
 // MARK: - Pieces
 
-struct BriefingBar: View {
+/// What the app is doing right now: a small coloured capsule.
+struct StatusPill: View {
+    let phase: TrainingSession.Phase
+
+    var body: some View {
+        Label(text, systemImage: symbol)
+            .font(.caption.weight(.semibold))
+            .foregroundStyle(color)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(color.opacity(0.14), in: Capsule())
+            .animation(.ui, value: phase)
+            .contentTransition(.opacity)
+    }
+
+    private var text: String {
+        switch phase {
+        case .ready: return "Starting"
+        case .atcSpeaking: return "ATC transmitting"
+        case .awaitingPilot: return "Your call"
+        case .recording: return "Transmitting"
+        case .analysing: return "Analysing"
+        case .reviewing: return "Review"
+        case .finished: return "Complete"
+        }
+    }
+
+    private var symbol: String {
+        switch phase {
+        case .ready: return "hourglass"
+        case .atcSpeaking: return "speaker.wave.2.fill"
+        case .awaitingPilot: return "mic"
+        case .recording: return "dot.radiowaves.left.and.right"
+        case .analysing: return "waveform"
+        case .reviewing: return "checkmark.bubble"
+        case .finished: return "flag.checkered"
+        }
+    }
+
+    private var color: Color {
+        switch phase {
+        case .ready, .analysing: return .secondary
+        case .atcSpeaking: return .blue
+        case .awaitingPilot: return .accentColor
+        case .recording: return .red
+        case .reviewing, .finished: return .green
+        }
+    }
+}
+
+/// Flight details for the scenario, as a quiet card at the top of the transcript.
+struct BriefingCard: View {
     let items: [BriefingItem]
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 18) {
-                ForEach(items) { item in
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(item.label.uppercased())
-                            .font(.caption2.weight(.semibold))
-                            .foregroundStyle(.secondary)
-                        Text(item.value)
-                            .font(.callout.monospacedDigit())
-                            .textSelection(.enabled)
-                    }
+        Grid(alignment: .leading, horizontalSpacing: 16, verticalSpacing: 8) {
+            ForEach(items) { item in
+                GridRow {
+                    Text(item.label)
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                        .gridColumnAlignment(.trailing)
+                    Text(item.value)
+                        .font(.callout.monospacedDigit())
+                        .textSelection(.enabled)
                 }
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 10)
         }
-        .background(.bar)
+        .padding(16)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(.quinary, in: RoundedRectangle(cornerRadius: 12, style: .continuous))
     }
 }
 
@@ -235,11 +322,10 @@ struct LogBubble: View {
     @State private var revealed = false
 
     var body: some View {
-        HStack(alignment: .top) {
-            if isPilot { Spacer(minLength: 80) }
+        HStack(alignment: .bottom, spacing: 10) {
+            if isPilot { Spacer(minLength: 60) } else { avatar }
             VStack(alignment: isPilot ? .trailing : .leading, spacing: 4) {
                 HStack(spacing: 6) {
-                    Image(systemName: isPilot ? "person.wave.2" : "antenna.radiowaves.left.and.right")
                     Text(speakerName).font(.caption.weight(.semibold))
                     if let a = entry.analysis { ScoreBadge(score: a.score) }
                 }
@@ -247,19 +333,34 @@ struct LogBubble: View {
 
                 Group {
                     if hidden && !revealed {
-                        Button("Transmission hidden (click to reveal)") { revealed = true }
-                            .buttonStyle(.link)
+                        Button {
+                            revealed = true
+                        } label: {
+                            Label("Hidden. Click to reveal", systemImage: "eye.slash")
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.secondary)
                     } else {
-                        Text(entry.text).textSelection(.enabled)
+                        Text(entry.text)
+                            .textSelection(.enabled)
+                            .foregroundStyle(isPilot ? AnyShapeStyle(Color.white) : AnyShapeStyle(HierarchicalShapeStyle.primary))
                     }
                 }
                 .padding(.horizontal, 14)
                 .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 14)
-                    .fill(isPilot ? Color.accentColor.opacity(0.18) : Color.secondary.opacity(0.12)))
+                .background(isPilot ? AnyShapeStyle(Color.accentColor) : AnyShapeStyle(HierarchicalShapeStyle.quaternary),
+                            in: RoundedRectangle(cornerRadius: 16, style: .continuous))
             }
-            if !isPilot { Spacer(minLength: 80) }
+            if isPilot { avatar } else { Spacer(minLength: 60) }
         }
+    }
+
+    private var avatar: some View {
+        Image(systemName: isPilot ? "person.fill" : "antenna.radiowaves.left.and.right")
+            .font(.system(size: 13, weight: .semibold))
+            .foregroundStyle(.white)
+            .frame(width: 28, height: 28)
+            .background(isPilot ? Color.accentColor.gradient : Color.gray.gradient, in: Circle())
     }
 
     private var isPilot: Bool { entry.speaker == .pilot }
@@ -267,7 +368,7 @@ struct LogBubble: View {
     private var speakerName: String {
         switch entry.speaker {
         case .atc(let station): return station
-        case .pilot: return "You (\(callsign))"
+        case .pilot: return "You · \(callsign)"
         }
     }
 }
@@ -277,17 +378,21 @@ struct LiveBubble: View {
 
     var body: some View {
         HStack {
-            Spacer(minLength: 80)
-            Text(text.isEmpty ? "Listening…" : text)
-                .italic()
-                .foregroundStyle(.secondary)
-                .padding(.horizontal, 14)
-                .padding(.vertical, 10)
-                .background(RoundedRectangle(cornerRadius: 14).strokeBorder(Color.red.opacity(0.6), lineWidth: 1.5))
+            Spacer(minLength: 60)
+            Label {
+                Text(text.isEmpty ? "Listening…" : text)
+            } icon: {
+                Image(systemName: "waveform").symbolEffect(.variableColor.iterative)
+            }
+            .foregroundStyle(.secondary)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 10)
+            .overlay(RoundedRectangle(cornerRadius: 16, style: .continuous).strokeBorder(.red.opacity(0.6), lineWidth: 1.5))
         }
     }
 }
 
+/// Push-to-talk button. Feedback starts the instant it's pressed, not on release.
 struct PTTButton: View {
     let active: Bool
     let enabled: Bool
@@ -295,23 +400,25 @@ struct PTTButton: View {
     let onDown: @MainActor () -> Void
     let onUp: @MainActor () -> Void
     @State private var pressing = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
             Circle()
-                .fill(active ? Color.red : (enabled ? Color.accentColor : Color.gray.opacity(0.4)))
+                .stroke(Color.red.opacity(0.3), lineWidth: 8)
+                .scaleEffect(1 + CGFloat(active ? level : 0) * 0.3)
+                .opacity(active ? 1 : 0)
             Circle()
-                .stroke(Color.red.opacity(0.35), lineWidth: 6)
-                .scaleEffect(1 + CGFloat(active ? level : 0) * 0.35)
-            VStack(spacing: 2) {
-                Image(systemName: active ? "mic.fill" : "mic")
-                    .font(.system(size: 22, weight: .semibold))
-                Text("PTT").font(.caption2.weight(.bold))
-            }
-            .foregroundStyle(.white)
+                .fill(fill.gradient)
+                .shadow(color: fill.opacity(enabled ? 0.35 : 0), radius: active ? 10 : 6, y: 3)
+            Image(systemName: active ? "mic.fill" : "mic")
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundStyle(.white)
         }
-        .frame(width: 72, height: 72)
-        .animation(.easeOut(duration: 0.1), value: level)
+        .frame(width: 76, height: 76)
+        .scaleEffect(pressing || active ? 0.94 : 1)
+        .animation(reduceMotion ? nil : .ui, value: pressing || active)
+        .animation(.easeOut(duration: 0.08), value: level)
         .contentShape(Circle())
         .gesture(
             DragGesture(minimumDistance: 0)
@@ -326,7 +433,13 @@ struct PTTButton: View {
                     onUp()
                 }
         )
+        .accessibilityLabel("Push to talk")
+        .accessibilityHint("Hold to transmit, or hold the space bar")
         .help("Hold to transmit (or hold the space bar)")
+    }
+
+    private var fill: Color {
+        active ? .red : (enabled ? .accentColor : .gray.opacity(0.5))
     }
 }
 
@@ -338,7 +451,7 @@ struct ScoreBadge: View {
             .font(.caption2.weight(.bold).monospacedDigit())
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(Capsule().fill(Color.forScore(score).opacity(0.2)))
+            .background(Color.forScore(score).opacity(0.18), in: Capsule())
             .foregroundStyle(Color.forScore(score))
     }
 }

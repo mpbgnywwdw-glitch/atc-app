@@ -23,9 +23,9 @@ run_case() {
   if grep -Eq "$expect" "$OUT/$name.ocr.txt"; then echo "PASS: $name"; else echo "FAIL: $name: '$expect' not on screen"; FAILED=1; fi
 }
 
-run_case intro "Start scenario" RT_SELECT=controlled-departure
-run_case session-departure "PTT" RT_AUTOSTART=controlled-departure
-run_case session-mayday "PTT" RT_AUTOSTART=mayday
+run_case intro "Start Scenario" RT_SELECT=controlled-departure
+run_case session-departure "Hold to Talk" RT_AUTOSTART=controlled-departure
+run_case session-mayday "Hold to Talk" RT_AUTOSTART=mayday
 
 cp ~/Library/Logs/DiagnosticReports/ATCTrainer* "$OUT/" 2>/dev/null || true
 exit $FAILED

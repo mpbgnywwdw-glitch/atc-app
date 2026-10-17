@@ -3,7 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "ATCTrainer",
-    platforms: [.macOS(.v13)],
+    platforms: [.macOS(.v14)],
     products: [
         .executable(name: "ATCTrainer", targets: ["ATCTrainer"]),
         .library(name: "RTCore", targets: ["RTCore"]),

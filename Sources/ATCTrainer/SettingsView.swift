@@ -2,26 +2,77 @@ import AVFoundation
 import RTCore
 import SwiftUI
 
+/// Standard macOS Settings window with toolbar tabs.
 struct SettingsView: View {
+    var body: some View {
+        TabView {
+            GeneralSettings()
+                .tabItem { Label("General", systemImage: "gearshape") }
+            VoiceSettings()
+                .tabItem { Label("ATC Voice", systemImage: "speaker.wave.2") }
+            RecognitionSettings()
+                .tabItem { Label("Recognition", systemImage: "mic") }
+            ScenarioSettings()
+                .tabItem { Label("Scenarios", systemImage: "square.stack") }
+        }
+        .frame(width: 540, height: 420)
+    }
+}
+
+private struct GeneralSettings: View {
+    @AppStorage(Prefs.registration) private var registration = ""
+    @AppStorage(Prefs.aircraftType) private var aircraftType = ""
+    @AppStorage(Prefs.showATCText) private var showATCText = true
+
+    var body: some View {
+        Form {
+            Section {
+                TextField("Registration", text: $registration, prompt: Text("Random"))
+                Picker("Aircraft type", selection: $aircraftType) {
+                    Text("Random").tag("")
+                    Divider()
+                    ForEach(AircraftType.all) { type in
+                        Text(type.code).tag(type.code)
+                    }
+                }
+            } header: {
+                Text("Your Aircraft")
+            } footer: {
+                if !registration.isEmpty && FlightContext.normaliseRegistration(registration) == nil {
+                    Text("Enter a UK registration like G-ABCD. A random one is used until then.")
+                        .foregroundStyle(.orange)
+                } else {
+                    Text("Leave blank to fly a different registration each time.")
+                }
+            }
+
+            Section {
+                Toggle("Show ATC transmissions as text", isOn: $showATCText)
+            } header: {
+                Text("Practice")
+            } footer: {
+                Text("Turn off to practise listening. Hidden transmissions can still be revealed with a click.")
+            }
+        }
+        .formStyle(.grouped)
+    }
+}
+
+private struct VoiceSettings: View {
     @EnvironmentObject private var model: AppModel
     @AppStorage(Prefs.voiceRate) private var voiceRate = 0.5
     @AppStorage(Prefs.voiceID) private var voiceID = ""
     @AppStorage(Prefs.radioEffect) private var radioEffect = true
-    @AppStorage(Prefs.showATCText) private var showATCText = true
-    @AppStorage(Prefs.onDeviceRecognition) private var onDevice = true
-    @AppStorage(Prefs.registration) private var registration = ""
-    @AppStorage(Prefs.aircraftType) private var aircraftType = ""
-    @AppStorage(Prefs.packURL) private var packURL = ""
-
     private let voices = ATCVoice.britishVoices
 
     var body: some View {
         Form {
-            Section("ATC voice") {
+            Section {
                 Picker("Voice", selection: $voiceID) {
-                    Text("Automatic (best British voice)").tag("")
+                    Text("Automatic").tag("")
+                    Divider()
                     ForEach(voices, id: \.identifier) { voice in
-                        Text("\(voice.name)\(voice.quality == .enhanced || voice.quality == .premium ? " (enhanced)" : "")")
+                        Text("\(voice.name)\(voice.quality == .enhanced || voice.quality == .premium ? " (Enhanced)" : "")")
                             .tag(voice.identifier)
                     }
                 }
@@ -35,46 +86,66 @@ struct SettingsView: View {
                     }
                 }
                 Toggle("VHF radio effect", isOn: $radioEffect)
-                Toggle("Show ATC transmissions as text", isOn: $showATCText)
-                Button("Test voice") {
-                    Task { await model.voice.speak("Golf Alpha Bravo Charlie Delta, Bramley Tower, readability five.") }
-                }
-                Text("For a more natural controller, download an enhanced or premium British voice in System Settings › Accessibility › Spoken Content › System Voice › Manage Voices.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section("Your aircraft") {
-                TextField("Registration", text: $registration, prompt: Text("Random (e.g. G-ABCD)"))
-                if !registration.isEmpty && FlightContext.normaliseRegistration(registration) == nil {
-                    Text("Enter a UK registration like G-ABCD. A random one will be used until then.")
-                        .font(.caption)
-                        .foregroundStyle(.orange)
-                }
-                Picker("Aircraft type", selection: $aircraftType) {
-                    Text("Random").tag("")
-                    ForEach(AircraftType.all) { type in
-                        Text(type.code).tag(type.code)
+                LabeledContent("Preview") {
+                    Button("Play Sample") {
+                        Task { await model.voice.speak("Golf Alpha Bravo Charlie Delta, Bramley Tower, readability five.") }
                     }
                 }
-            }
-
-            Section("Scenario packs") {
-                TextField("Scenario pack address", text: $packURL, prompt: Text("Default (RT Trainer on GitHub)"))
-                Text("Where \"Check for new scenarios\" downloads from. Leave blank for the default.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-
-            Section("Speech recognition") {
-                Toggle("Aviation-tuned recognition on this Mac (recommended)", isOn: $onDevice)
-                Text("Uses on-device English (UK) recognition with a language model trained on RT phraseology (macOS 14 or later). Turn off to use Apple's server recognition instead, which may do better with a strong accent.")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+            } footer: {
+                Text("For a more natural controller, download an Enhanced or Premium British voice in System Settings › Accessibility › Spoken Content › System Voice › Manage Voices.")
             }
         }
         .formStyle(.grouped)
-        .frame(width: 500)
-        .padding(.vertical, 8)
+    }
+}
+
+private struct RecognitionSettings: View {
+    @AppStorage(Prefs.onDeviceRecognition) private var onDevice = true
+
+    var body: some View {
+        Form {
+            Section {
+                Toggle("Aviation-tuned recognition on this Mac", isOn: $onDevice)
+            } footer: {
+                Text("Uses on-device English (UK) recognition with a language model trained on RT phraseology. Turn off to use Apple's server recognition instead, which may cope better with a strong accent.")
+            }
+        }
+        .formStyle(.grouped)
+    }
+}
+
+private struct ScenarioSettings: View {
+    @EnvironmentObject private var store: ScenarioStore
+    @EnvironmentObject private var progress: ProgressStore
+    @AppStorage(Prefs.packURL) private var packURL = ""
+    @State private var confirmReset = false
+
+    var body: some View {
+        Form {
+            Section {
+                LabeledContent("Downloaded") { Text("\(store.downloaded.count) scenarios") }
+                Button("Check for New Scenarios") { Task { await store.checkForUpdates() } }
+                    .disabled(store.isChecking)
+                TextField("Pack address", text: $packURL, prompt: Text("Default"))
+            } header: {
+                Text("Scenario Packs")
+            } footer: {
+                Text("Free scenario packs are downloaded from RT Trainer on GitHub. Leave the address blank to use the default.")
+            }
+
+            Section {
+                LabeledContent("Completed") { Text("\(progress.best.count) scenarios") }
+                Button("Reset Best Scores…", role: .destructive) { confirmReset = true }
+                    .disabled(progress.best.isEmpty)
+            } header: {
+                Text("Progress")
+            }
+        }
+        .formStyle(.grouped)
+        .confirmationDialog("Reset all best scores?", isPresented: $confirmReset) {
+            Button("Reset Best Scores", role: .destructive) { progress.reset() }
+        } message: {
+            Text("This can't be undone.")
+        }
     }
 }

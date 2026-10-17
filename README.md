@@ -46,7 +46,7 @@ Scenarios are JSON files (see [`scenario-packs/go-around.json`](scenario-packs/g
 
 ## Requirements
 
-- macOS 13 Ventura or later
+- macOS 14 Sonoma or later
 - Xcode 15 or later, or the Command Line Tools with Swift 5.9+
 - A microphone. A headset reduces echo from the ATC voice.
 

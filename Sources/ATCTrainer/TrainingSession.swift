@@ -31,6 +31,10 @@ final class TrainingSession: ObservableObject {
     @Published private(set) var lastAnalysis: Analysis?
     @Published private(set) var results: [Int: Analysis] = [:]
     @Published var errorMessage: String?
+    /// Whether the example call for the current step is shown.
+    @Published var showingExample = false
+    /// Called once with the average score when the scenario is completed.
+    var onFinish: (@MainActor (Int) -> Void)?
 
     private let voice: ATCVoice
     private let recognizer: RadioRecognizer
@@ -85,10 +89,12 @@ final class TrainingSession: ObservableObject {
         guard let step = currentStep else {
             appLog.notice("Scenario finished")
             phase = .finished
+            if let average = averageScore { onFinish?(average) }
             return
         }
         appLog.notice("Entering step \(self.index, privacy: .public)")
         lastAnalysis = nil
+        showingExample = false
         if let atc = step.atc {
             log.append(LogEntry(stepIndex: index, speaker: .atc(step.station), text: atc))
             phase = .atcSpeaking
@@ -162,6 +168,8 @@ final class TrainingSession: ObservableObject {
         index += 1
         Task { await enterStep() }
     }
+
+    var canReplay: Bool { currentStep?.atc != nil && (phase == .awaitingPilot || phase == .reviewing) }
 
     func replayATC() {
         guard let atc = currentStep?.atc, let station = currentStep?.station,

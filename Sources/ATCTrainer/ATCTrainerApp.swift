@@ -34,6 +34,7 @@ final class AppModel: ObservableObject {
     let voice = ATCVoice()
     let recognizer = RadioRecognizer()
     let store = ScenarioStore()
+    let progress = ProgressStore()
     @Published var session: TrainingSession?
     @Published var permissionError: String?
 
@@ -50,6 +51,8 @@ final class AppModel: ObservableObject {
             aircraft: typeCode.isEmpty ? nil : AircraftType.named(typeCode))
         appLog.notice("Starting scenario \(scenario.id, privacy: .public) as \(context.registration, privacy: .public)")
         let session = TrainingSession(scenario: scenario, context: context, voice: voice, recognizer: recognizer)
+        let progress = self.progress
+        session.onFinish = { score in progress.record(score, for: scenario.id) }
         self.session = session
         session.start()
     }
@@ -75,7 +78,8 @@ struct ATCTrainerApp: App {
             ContentView()
                 .environmentObject(model)
                 .environmentObject(model.store)
-                .frame(minWidth: 900, minHeight: 600)
+                .environmentObject(model.progress)
+                .frame(minWidth: 860, minHeight: 580)
                 .task {
                     NSApplication.shared.activate(ignoringOtherApps: true)
                     let env = ProcessInfo.processInfo.environment
@@ -97,17 +101,53 @@ struct ATCTrainerApp: App {
         .defaultSize(width: 1240, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {}
-            CommandGroup(after: .newItem) {
-                Button("Check for New Scenarios") {
-                    Task { await model.store.checkForUpdates() }
-                }
-            }
+            SidebarCommands()
+            InspectorCommands()
+            ScenarioCommands(model: model)
         }
 
         Settings {
             SettingsView()
                 .environmentObject(model)
                 .environmentObject(model.store)
+                .environmentObject(model.progress)
         }
+    }
+}
+
+/// The Scenario menu: every toolbar action is also available here with a keyboard shortcut.
+struct ScenarioCommands: Commands {
+    let model: AppModel
+
+    var body: some Commands {
+        CommandMenu("Scenario") {
+            SessionMenuItems(model: model)
+        }
+    }
+}
+
+private struct SessionMenuItems: View {
+    let model: AppModel
+    /// The session shown in the frontmost window (published by SessionView).
+    @FocusedObject private var session: TrainingSession?
+
+    var body: some View {
+        Button("Replay ATC") { session?.replayATC() }
+            .keyboardShortcut("r")
+            .disabled(session?.canReplay != true)
+        Button(session?.showingExample == true ? "Hide Example" : "Show Example") {
+            session?.showingExample.toggle()
+        }
+        .keyboardShortcut("e")
+        .disabled(session?.currentStep?.model == nil || session?.phase == .finished)
+        Button("Skip Call") { session?.skip() }
+            .keyboardShortcut("k")
+            .disabled(session == nil || session?.phase == .finished)
+        Button("End Scenario") { model.endSession() }
+            .keyboardShortcut(".")
+            .disabled(session == nil)
+        Divider()
+        Button("Check for New Scenarios") { Task { await model.store.checkForUpdates() } }
+            .keyboardShortcut("n", modifiers: [.command, .shift])
     }
 }
