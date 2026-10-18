@@ -50,7 +50,7 @@ struct ContentView: View {
     private var sidebar: some View {
         List(selection: $selection) {
             ForEach(ScenarioCategory.allCases, id: \.self) { category in
-                let items = filtered(ScenarioLibrary.all.filter { $0.category == category })
+                let items = filtered(store.scenarios(in: category))
                 if !items.isEmpty {
                     Section(category.rawValue) {
                         ForEach(items) { ScenarioRow(scenario: $0, best: progress.best[$0.id]).tag(Optional($0.id)) }
@@ -59,7 +59,7 @@ struct ContentView: View {
             }
             let downloaded = filtered(store.downloaded)
             if !downloaded.isEmpty {
-                Section("Downloaded") {
+                Section("New") {
                     ForEach(downloaded) { ScenarioRow(scenario: $0, best: progress.best[$0.id]).tag(Optional($0.id)) }
                 }
             }
@@ -204,6 +204,9 @@ struct ScenarioIntroView: View {
                         tip("dice.fill", "Callsign, runway, QNH and squawk change every time. Set your own registration in Settings.")
                     }
                 }
+                Text(Disclaimer.text)
+                    .font(.footnote)
+                    .foregroundStyle(.tertiary)
             }
             .padding(.horizontal, 40)
             .padding(.vertical, 32)
@@ -285,4 +288,8 @@ struct Chip: View {
             .padding(.vertical, 4)
             .background(.quaternary, in: Capsule())
     }
+}
+
+enum Disclaimer {
+    static let text = "RT Trainer is a practice aid. It isn't an approved training device and doesn't replace instruction or the FRTOL practical test. It isn't affiliated with or endorsed by the UK Civil Aviation Authority. Aerodromes in the scenarios are fictional and frequencies are for practice only; always use CAP 413 and current AIP information when flying."
 }

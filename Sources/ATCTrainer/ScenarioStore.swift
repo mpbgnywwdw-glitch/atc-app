@@ -1,21 +1,51 @@
 import Foundation
 import RTCore
 
-/// Scenarios beyond the built-in library, downloaded from the free scenario packs published in the repository.
-/// They're stored as validated `ScenarioDefinition` JSON files in Application Support.
+/// Scenarios beyond the built-in library: the packs bundled inside the app, plus any newer packs downloaded
+/// from the repository. Downloads are stored as validated `ScenarioDefinition` JSON files in Application Support.
 @MainActor
 final class ScenarioStore: ObservableObject {
     static let defaultPackURL = "https://raw.githubusercontent.com/mpbgnywwdw-glitch/atc-app/main/scenario-packs/index.json"
 
+    /// Scenario packs shipped inside the app, so every scenario works offline.
+    let bundled: [Scenario]
+    /// Downloaded scenarios that aren't already bundled.
     @Published private(set) var downloaded: [Scenario] = []
     @Published private(set) var isChecking = false
     @Published var statusMessage: String?
 
     private var byID: [String: Scenario] = [:]
 
-    init() { load() }
+    init() {
+        bundled = Self.loadBundled()
+        load()
+    }
 
     func scenario(id: String) -> Scenario? { ScenarioLibrary.scenario(id: id) ?? byID[id] }
+
+    /// Built-in and bundled scenarios in one category, in library order.
+    func scenarios(in category: ScenarioCategory) -> [Scenario] {
+        (ScenarioLibrary.all + bundled).filter { $0.category == category }
+    }
+
+    /// The `scenario-packs` folder in the app bundle, or in the working directory under `swift run`.
+    private static var bundledDirectory: URL? {
+        if let url = Bundle.main.url(forResource: "scenario-packs", withExtension: nil) { return url }
+        let local = URL(fileURLWithPath: FileManager.default.currentDirectoryPath).appendingPathComponent("scenario-packs")
+        return FileManager.default.fileExists(atPath: local.path) ? local : nil
+    }
+
+    private static func loadBundled() -> [Scenario] {
+        guard let dir = bundledDirectory,
+              let data = try? Data(contentsOf: dir.appendingPathComponent("index.json")),
+              let index = try? JSONDecoder().decode(ScenarioPackIndex.self, from: data) else { return [] }
+        return index.scenarios.compactMap { file in
+            guard let data = try? Data(contentsOf: dir.appendingPathComponent(file)),
+                  let definition = try? ScenarioDefinition.decode(data),
+                  ScenarioLibrary.scenario(id: definition.id) == nil else { return nil }
+            return definition.makeScenario()
+        }
+    }
 
     // MARK: Storage
 
@@ -40,9 +70,11 @@ final class ScenarioStore: ObservableObject {
     }
 
     func load() {
+        let bundledIDs = Set(bundled.map(\.id))
         downloaded = Self.loadDefinitions(in: Self.downloadedDirectory)
+            .filter { !bundledIDs.contains($0.0.id) }
             .sorted { $0.0.title < $1.0.title }.map { $0.0.makeScenario() }
-        byID = Dictionary(downloaded.map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
+        byID = Dictionary((bundled + downloaded).map { ($0.id, $0) }, uniquingKeysWith: { a, _ in a })
     }
 
     // MARK: Scenario packs
@@ -84,8 +116,9 @@ final class ScenarioStore: ObservableObject {
             load()
 
             let newCount = downloaded.filter { !previous.contains($0.id) }.count
-            var message = "\(downloaded.count) downloaded scenario\(downloaded.count == 1 ? "" : "s")"
-            message += newCount > 0 ? " (\(newCount) new)." : ". No new scenarios."
+            var message = newCount > 0
+                ? "\(newCount) new scenario\(newCount == 1 ? "" : "s") added."
+                : "You have every scenario. No new ones yet."
             if !rejected.isEmpty { message += " Skipped \(rejected.count) that failed checks." }
             statusMessage = message
         } catch {

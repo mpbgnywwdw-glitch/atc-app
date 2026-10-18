@@ -26,6 +26,7 @@ run_case() {
 run_case intro "Start Scenario" RT_SELECT=controlled-departure
 run_case session-departure "Hold to Talk" RT_AUTOSTART=controlled-departure
 run_case session-mayday "Hold to Talk" RT_AUTOSTART=mayday
+run_case session-bundled "Hold to Talk" RT_AUTOSTART=pack-special-vfr
 
 cp ~/Library/Logs/DiagnosticReports/ATCTrainer* "$OUT/" 2>/dev/null || true
 exit $FAILED

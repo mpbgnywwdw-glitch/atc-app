@@ -1,0 +1,7 @@
+// Your Apple Developer settings. Edit these two lines before archiving for the App Store.
+//
+// DEVELOPMENT_TEAM: the 10-character Team ID from developer.apple.com › Account › Membership.
+// PRODUCT_BUNDLE_IDENTIFIER: must match the bundle ID you register in App Store Connect.
+
+DEVELOPMENT_TEAM =
+PRODUCT_BUNDLE_IDENTIFIER = uk.rttrainer.ATCTrainer
