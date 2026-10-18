@@ -1,0 +1,205 @@
+{
+  "id": "pack-position-reports",
+  "category": "enRoute",
+  "title": "Position reports on a navigation exercise",
+  "summary": "Give standard position reports (position, time, altitude, next point and estimate) to London Information.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "London Information",
+      "value": "124.750"
+    },
+    {
+      "label": "Route",
+      "value": "Westbury – Hadley – Ashwell at 2,500 ft"
+    },
+    {
+      "label": "Times",
+      "value": "Westbury at 15, estimate Hadley 32; Hadley at 33, estimate Ashwell 47"
+    },
+    {
+      "label": "Next frequency",
+      "value": "Ashwell Information 123.505"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "You're on a Basic Service with London Information and were asked to report at Westbury. You're overhead Westbury at minute 15, at 2,500 feet, estimating Hadley at 32. Make your position report.",
+      "model": "{cs}, Westbury at one five, altitude two thousand five hundred feet, estimating Hadley at three two.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Position (Westbury)",
+          "value": "",
+          "patterns": [
+            "westbury"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Time one five",
+          "value": "15",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2500 feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next point (Hadley)",
+          "value": "",
+          "patterns": [
+            "hadley"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Estimate three two",
+          "value": "32",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, roger, report at Hadley.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "You're over Hadley at minute 33, at 2,500 feet, estimating Ashwell at 47. Make your position report.",
+      "model": "{cs}, Hadley at three three, altitude two thousand five hundred feet, estimating Ashwell at four seven.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Position (Hadley)",
+          "value": "",
+          "patterns": [
+            "hadley"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Time three three",
+          "value": "33",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2500 feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next point (Ashwell)",
+          "value": "",
+          "patterns": [
+            "ashwell"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Estimate four seven",
+          "value": "47",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, roger, {region} pressure {rps}.",
+      "task": "Read back the regional pressure setting.",
+      "model": "{region} {rps}, {cs}.",
+      "elements": [
+        {
+          "type": "pressure",
+          "label": "{region} pressure {rps}",
+          "value": "{rpsValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "You're approaching Ashwell. Tell London Information you're changing to Ashwell Information on 123.505.",
+      "model": "{cs}, changing to Ashwell Information one two three decimal five zero five.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Changing frequency",
+          "value": "",
+          "patterns": [
+            "changing|leaving|freecall"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "ashwell|123.505"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "London Information",
+      "atc": "{cs}, Basic Service terminated, frequency change approved.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

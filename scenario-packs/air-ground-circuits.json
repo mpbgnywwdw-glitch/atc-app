@@ -1,0 +1,205 @@
+{
+  "id": "pack-air-ground-circuits",
+  "category": "uncontrolled",
+  "title": "Circuits at an Air/Ground aerodrome",
+  "summary": "Fly touch-and-go circuits at Hadley, making your own position reports and taking traffic information.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Hadley Radio",
+      "value": "129.830"
+    },
+    {
+      "label": "Circuit",
+      "value": "Runway {runway} · {Circuit}-hand · QNH {qnhValue}"
+    },
+    {
+      "label": "Reminder",
+      "value": "Air/Ground operators give information only, never clearances"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "You're at the holding point for runway {runway}, checks complete, planning circuits. Call Hadley Radio on 129.830 for airfield information.",
+      "model": "Hadley Radio, {cs}, holding point runway {rw}, request airfield information for circuits.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Hadley Radio)",
+          "value": "Hadley Radio",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request airfield information",
+          "value": "",
+          "patterns": [
+            "airfield information|airfield details|airfield data"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Hadley Radio",
+      "atc": "{cs}, Hadley Radio, runway {rw}, {circuit} hand, QNH {qnh}, one aircraft in the circuit.",
+      "task": "Read back the runway and pressure setting.",
+      "model": "Runway {rw}, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "The runway and final approach are clear. Tell Hadley Radio you're lining up and departing for circuits.",
+      "model": "{cs}, lining up and departing runway {rw} for circuits.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Lining up and departing",
+          "value": "",
+          "patterns": [
+            "lining up|departing|taking off"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "{cs}, roger.",
+      "task": "You're on the downwind leg. Report downwind for a touch-and-go.",
+      "model": "{cs}, downwind, touch and go.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (touch and go)",
+          "value": "",
+          "patterns": [
+            "touch and go"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Hadley Radio",
+      "atc": "{cs}, roger, one aircraft ahead on base.",
+      "task": "Respond. You can see it.",
+      "model": "Traffic in sight, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Traffic in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual|looking"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Hadley Radio",
+      "atc": "",
+      "task": "You're on final behind the other aircraft, which has now landed and vacated. Make your final call.",
+      "model": "{cs}, final, touch and go.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Touch and go",
+          "value": "",
+          "patterns": [
+            "touch and go"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "atc",
+      "station": "Hadley Radio",
+      "atc": "{cs}, roger, surface wind {wind}.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

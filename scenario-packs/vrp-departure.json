@@ -1,0 +1,214 @@
+{
+  "id": "pack-vrp-departure",
+  "category": "controlled",
+  "title": "Departure via a VRP",
+  "summary": "Read back a departure clearance to leave the zone via a visual reference point, then report on the way out.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Plan",
+      "value": "Depart north via North Gate VRP, not above 2,000 ft"
+    },
+    {
+      "label": "Weather",
+      "value": "Runway {runway} · QNH {qnhValue} · wind {windText}"
+    },
+    {
+      "label": "Next frequency",
+      "value": "London Information 124.750"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're at holding point Alpha One with checks complete, departing north. Call Bramley Tower and tell them you're ready.",
+      "model": "Bramley Tower, {cs}, holding point Alpha One, ready for departure.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Ready for departure",
+          "value": "",
+          "patterns": [
+            "ready"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, Bramley Tower, after departure leave the zone via North Gate VRP, not above altitude two thousand feet, QNH {qnh}.",
+      "task": "Read back the departure clearance.",
+      "model": "After departure leave the zone via North Gate, not above altitude two thousand feet, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Via North Gate",
+          "value": "",
+          "patterns": [
+            "north gate"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Not above two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "After departure",
+          "value": "",
+          "patterns": [
+            "after departure"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, surface wind {wind}, runway {rw}, cleared for take-off.",
+      "task": "Read back the take-off clearance.",
+      "model": "Runway {rw}, cleared for take-off, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared for take-off",
+          "value": "",
+          "patterns": [
+            "cleared for takeoff|cleared takeoff|clear for takeoff"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're approaching North Gate VRP at 2,000 feet. Report.",
+      "model": "{cs}, approaching North Gate, two thousand feet.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Approaching North Gate",
+          "value": "",
+          "patterns": [
+            "north gate"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, report leaving the zone.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You've left the zone. Report leaving, and say you're changing to London Information on 124.750.",
+      "model": "{ab}, leaving the zone, changing to London Information one two four decimal seven five zero.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Leaving the zone",
+          "value": "",
+          "patterns": [
+            "leaving"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "london information|124.75"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Bramley Tower",
+      "atc": "{ab}, frequency change approved.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

@@ -1,0 +1,160 @@
+{
+  "id": "pack-mayday-relay",
+  "category": "emergency",
+  "title": "MAYDAY RELAY",
+  "summary": "Relay a distress call you've heard from another aircraft that nobody has answered.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "London Information",
+      "value": "124.750"
+    },
+    {
+      "label": "Situation",
+      "value": "You heard a weak MAYDAY from G-OXYZ (C172): engine failure 5 nm east of Hadley, 1,500 ft, forced landing, 2 POB. No reply was heard."
+    }
+  ],
+  "steps": [
+    {
+      "kind": "emergency",
+      "station": "London Information",
+      "atc": "",
+      "task": "You heard a weak MAYDAY from G-OXYZ, a Cessna 172 with an engine failure 5 miles east of Hadley at 1,500 feet, making a forced landing with 2 POB. Nobody answered it. Relay it to London Information.",
+      "model": "Mayday relay, Mayday relay, Mayday relay, London Information, {cs}, intercepted Mayday from Golf Oscar X-ray Yankee Zulu, Cessna one seven two, engine failure, forced landing, five miles east of Hadley, one thousand five hundred feet, two persons on board.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "MAYDAY RELAY ×3",
+          "value": "",
+          "patterns": [
+            "mayday relay mayday relay mayday relay"
+          ],
+          "required": true
+        },
+        {
+          "type": "station",
+          "label": "Station called (London Information)",
+          "value": "London Information",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Intercepted MAYDAY",
+          "value": "",
+          "patterns": [
+            "intercepted"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Aircraft in distress (G-OXYZ)",
+          "value": "",
+          "patterns": [
+            "g o x y z"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Nature of emergency",
+          "value": "",
+          "patterns": [
+            "engine"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Its intentions",
+          "value": "",
+          "patterns": [
+            "forced landing|landing|land"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Its position",
+          "value": "",
+          "patterns": [
+            "east of hadley|east|hadley"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Its altitude one thousand five hundred feet",
+          "value": "1500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Persons on board",
+          "value": "",
+          "patterns": [
+            "on board|persons|pob"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, London Information, roger your Mayday relay, I am informing London Centre, remain on this frequency.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, do you have the aircraft in sight?",
+      "task": "Reply. You can't see it.",
+      "model": "Negative, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Negative",
+          "value": "",
+          "patterns": [
+            "negative"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "London Information",
+      "atc": "{cs}, roger, London Centre is now in contact with Golf Oscar X-ray Yankee Zulu, resume normal operations.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

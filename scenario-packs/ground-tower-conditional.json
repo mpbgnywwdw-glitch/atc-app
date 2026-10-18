@@ -168,7 +168,7 @@
           "label": "Condition (after the landing Cessna)",
           "value": "",
           "patterns": [
-            "after the landing (cessna|traffic|aircraft)"
+            "(after|behind) the landing (cessna|traffic|aircraft)"
           ],
           "required": true
         },

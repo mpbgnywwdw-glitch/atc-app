@@ -1,0 +1,344 @@
+{
+  "id": "pack-pan-medical",
+  "category": "emergency",
+  "title": "PAN PAN: passenger taken ill",
+  "summary": "A medical urgency: divert to Bramley with Westbury Radar's help and have an ambulance meet you.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Westbury Radar",
+      "value": "127.880"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Situation",
+      "value": "Passenger unwell, 10 nm north of Westbury, 3,000 ft, heading 180"
+    },
+    {
+      "label": "You",
+      "value": "PPL holder, {pobValue} POB"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "emergency",
+      "station": "Westbury Radar",
+      "atc": "",
+      "task": "Your passenger has become unwell. You're 10 miles north of Westbury at 3,000 feet, heading 180. Make a PAN PAN to Westbury Radar on 127.880: you're diverting to Bramley and want an ambulance on arrival.",
+      "model": "Pan Pan, Pan Pan, Pan Pan, Westbury Radar, {cs}, {type}, passenger taken ill, diverting to Bramley, request ambulance on arrival, one zero miles north of Westbury, three thousand feet, heading one eight zero, PPL holder, {pob} persons on board.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "PAN PAN ×3",
+          "value": "",
+          "patterns": [
+            "pan pan pan pan pan pan"
+          ],
+          "required": true
+        },
+        {
+          "type": "station",
+          "label": "Station called (Westbury Radar)",
+          "value": "Westbury Radar",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Nature (passenger ill)",
+          "value": "",
+          "patterns": [
+            "ill|unwell|medical|sick"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (divert to Bramley)",
+          "value": "",
+          "patterns": [
+            "divert(ing)?|bramley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request ambulance",
+          "value": "",
+          "patterns": [
+            "ambulance"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "north|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 3000 feet",
+          "value": "3000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Heading one eight zero",
+          "value": "180",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Pilot qualification",
+          "value": "",
+          "patterns": [
+            "ppl|private pilot|student|licence|qualification"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Persons on board",
+          "value": "",
+          "patterns": [
+            "pob|on board|persons|people|souls"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "Pan Pan {cs}, Westbury Radar, roger Pan, squawk seven seven zero zero.",
+      "task": "",
+      "model": "Squawk seven seven zero zero, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk 7700",
+          "value": "7700",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{cs}, identified, ambulance requested, turn right heading zero four five for Bramley, report Bramley in sight.",
+      "task": "",
+      "model": "Right heading zero four five, wilco, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Heading zero four five",
+          "value": "",
+          "patterns": [
+            "0?45"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Right turn",
+          "value": "",
+          "patterns": [
+            "right"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Westbury Radar",
+      "atc": "",
+      "task": "Bramley is now in sight. Tell Westbury Radar.",
+      "model": "{cs}, Bramley in sight.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Bramley in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Westbury Radar",
+      "atc": "{cs}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {cs}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "Call Bramley Tower: you're the PAN aircraft with an ill passenger, 5 miles north-east at 2,000 feet, and you'd like a straight-in approach.",
+      "model": "Bramley Tower, {cs}, Pan, passenger ill, five miles north east, two thousand feet, request straight-in approach.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Pan status",
+          "value": "",
+          "patterns": [
+            "pan"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "north east|northeast|miles"
+          ],
+          "required": false
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request straight-in approach",
+          "value": "",
+          "patterns": [
+            "straight in"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, Bramley Tower, ambulance standing by, make a straight-in approach runway {rw}, report final, QNH {qnh}.",
+      "task": "",
+      "model": "Straight-in approach runway {rw}, wilco, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Straight-in approach",
+          "value": "",
+          "patterns": [
+            "straight in"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, runway {rw}, cleared to land, surface wind {wind}.",
+      "task": "Read back the landing clearance.",
+      "model": "Cleared to land, runway {rw}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to land",
+          "value": "",
+          "patterns": [
+            "cleared to land|clear to land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

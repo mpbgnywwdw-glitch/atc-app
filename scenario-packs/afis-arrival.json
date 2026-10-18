@@ -205,7 +205,7 @@
     {
       "kind": "readback",
       "station": "Ashwell Information",
-      "atc": "{ab}, runway {rw}, surface wind {wind}, land at your discretion.",
+      "atc": "{ab}, runway {rw}, land at your discretion, surface wind {wind}.",
       "task": "Reply to the AFISO.",
       "model": "Landing, {ab}.",
       "elements": [

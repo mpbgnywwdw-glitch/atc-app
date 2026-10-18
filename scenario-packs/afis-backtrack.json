@@ -1,0 +1,212 @@
+{
+  "id": "pack-afis-backtrack",
+  "category": "uncontrolled",
+  "title": "AFIS departure with a backtrack",
+  "summary": "Taxi at Ashwell (AFIS), backtrack at your discretion, and depart, replying with your intentions.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Ashwell Information",
+      "value": "123.505"
+    },
+    {
+      "label": "Weather",
+      "value": "Runway {runway} · QNH {qnhValue} · wind {windText}"
+    },
+    {
+      "label": "Plan",
+      "value": "Depart west, then London Information 124.750"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're at the Ashwell flying club, about to depart to the west. Call Ashwell Information on 123.505 and request taxi.",
+      "model": "Ashwell Information, {cs}, {type}, at the flying club, request taxi.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Ashwell Information)",
+          "value": "Ashwell Information",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request taxi",
+          "value": "",
+          "patterns": [
+            "taxi"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{cs}, Ashwell Information, runway {rw}, taxi to holding point Alpha, QNH {qnh}.",
+      "task": "",
+      "model": "Runway {rw}, taxi holding point Alpha, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Holding point Alpha",
+          "value": "",
+          "patterns": [
+            "point a|to a"
+          ],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're at holding point Alpha, mid-runway, with checks complete. Report ready and ask to backtrack for the full length.",
+      "model": "{cs}, holding point Alpha, ready for departure, request backtrack.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Ready for departure",
+          "value": "",
+          "patterns": [
+            "ready"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request backtrack",
+          "value": "",
+          "patterns": [
+            "backtrack|back track"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{cs}, no reported traffic, backtrack at your discretion, runway {rw}.",
+      "task": "Reply with your intention.",
+      "model": "Backtracking runway {rw}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Backtracking",
+          "value": "",
+          "patterns": [
+            "backtrack(ing)?|back track(ing)?"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Ashwell Information",
+      "atc": "{cs}, surface wind {wind}, runway {rw}, take off at your discretion.",
+      "task": "You're lined up and the approach is clear. Reply with your intention.",
+      "model": "Taking off, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Taking off",
+          "value": "",
+          "patterns": [
+            "taking off|takeoff"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "noClearances"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Ashwell Information",
+      "atc": "",
+      "task": "You're airborne and leaving the ATZ to the west. Tell Ashwell you're changing to London Information on 124.750.",
+      "model": "{cs}, leaving the ATZ to the west, changing to London Information one two four decimal seven five zero.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Leaving / changing frequency",
+          "value": "",
+          "patterns": [
+            "leaving|changing"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "london information|124.75"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Ashwell Information",
+      "atc": "{cs}, roger.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

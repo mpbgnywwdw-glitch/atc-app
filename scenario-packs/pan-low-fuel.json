@@ -1,0 +1,321 @@
+{
+  "id": "pack-pan-low-fuel",
+  "category": "emergency",
+  "title": "PAN PAN: low fuel",
+  "summary": "Declare a fuel urgency with Bramley Approach, request priority, and land straight in.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Situation",
+      "value": "Headwinds: about 20 minutes' endurance left at 2,500 ft, 15 nm south of Bramley, heading 360"
+    },
+    {
+      "label": "You",
+      "value": "PPL holder, {pobValue} POB"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "emergency",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "You have about 20 minutes' fuel left. You're 15 miles south of Bramley at 2,500 feet, heading 360. Make a PAN PAN to Bramley Approach on 126.505 and request a priority landing at Bramley.",
+      "model": "Pan Pan, Pan Pan, Pan Pan, Bramley Approach, {cs}, {type}, low fuel, two zero minutes endurance, request priority landing at Bramley, one five miles south of Bramley, two thousand five hundred feet, heading three six zero, PPL holder, {pob} persons on board.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "PAN PAN ×3",
+          "value": "",
+          "patterns": [
+            "pan pan pan pan pan pan"
+          ],
+          "required": true
+        },
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Nature (low fuel)",
+          "value": "",
+          "patterns": [
+            "fuel"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Endurance two zero minutes",
+          "value": "20",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (priority landing)",
+          "value": "",
+          "patterns": [
+            "priority|landing"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2500 feet",
+          "value": "2500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Heading three six zero",
+          "value": "360",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Pilot qualification",
+          "value": "",
+          "patterns": [
+            "ppl|private pilot|student|licence|qualification"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Persons on board",
+          "value": "",
+          "patterns": [
+            "pob|on board|persons|people|souls"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "Pan Pan {cs}, Bramley Approach, roger Pan, squawk seven seven zero zero, QNH {qnh}.",
+      "task": "",
+      "model": "Squawk seven seven zero zero, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk 7700",
+          "value": "7700",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{cs}, identified one five miles south of Bramley, route direct to Bramley, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "",
+      "model": "Direct Bramley, Bramley Tower one one eight decimal three three zero, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Direct to Bramley",
+          "value": "",
+          "patterns": [
+            "direct"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "Call Bramley Tower: you're the PAN aircraft, 10 miles south, and you'd like a straight-in approach to runway {runway}.",
+      "model": "Bramley Tower, {cs}, Pan, one zero miles south of Bramley, request straight-in approach runway {rw}.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Pan status",
+          "value": "",
+          "patterns": [
+            "pan"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request straight-in approach",
+          "value": "",
+          "patterns": [
+            "straight in"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, Bramley Tower, number one, report final, runway {rw}, QNH {qnh}.",
+      "task": "",
+      "model": "Number one, wilco, runway {rw}, QNH {qnh}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Number one",
+          "value": "",
+          "patterns": [
+            "number 1"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on final. Make your final call.",
+      "model": "{cs}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, runway {rw}, cleared to land, surface wind {wind}.",
+      "task": "Read back the landing clearance.",
+      "model": "Cleared to land, runway {rw}, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to land",
+          "value": "",
+          "patterns": [
+            "cleared to land|clear to land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

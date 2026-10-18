@@ -1,0 +1,198 @@
+{
+  "id": "pack-backtrack-departure",
+  "category": "controlled",
+  "title": "Backtrack and line up",
+  "summary": "Request a backtrack from an intermediate holding point, line up, take off and join the circuit.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Position",
+      "value": "Holding point Bravo (mid-runway); you want the full length"
+    },
+    {
+      "label": "Weather",
+      "value": "Runway {runway} · QNH {qnhValue} · wind {windText}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're at holding point Bravo, halfway along the runway, with checks complete. You want the full length. Tell Tower you're ready and ask to backtrack.",
+      "model": "Bramley Tower, {cs}, holding point Bravo, ready for departure, request backtrack.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Tower)",
+          "value": "Bramley Tower",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Ready for departure",
+          "value": "",
+          "patterns": [
+            "ready"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request backtrack",
+          "value": "",
+          "patterns": [
+            "backtrack|back track"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "takeoffWord"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, Bramley Tower, backtrack runway {rw}, line up and wait.",
+      "task": "",
+      "model": "Backtrack runway {rw}, line up and wait, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Backtrack",
+          "value": "",
+          "patterns": [
+            "backtrack|back track"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Line up and wait",
+          "value": "",
+          "patterns": [
+            "line up and wait|line up wait"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "lineUpOnly"
+      ]
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You've backtracked, turned round and lined up. Report lined up.",
+      "model": "{cs}, lined up.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Lined up",
+          "value": "",
+          "patterns": [
+            "lined up"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": [
+        "lineUpOnly"
+      ]
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{cs}, surface wind {wind}, runway {rw}, cleared for take-off.",
+      "task": "Read back the take-off clearance.",
+      "model": "Runway {rw}, cleared for take-off, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared for take-off",
+          "value": "",
+          "patterns": [
+            "cleared for takeoff|cleared takeoff|clear for takeoff"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, report downwind.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on the downwind leg and want a touch-and-go. Make your downwind call.",
+      "model": "{ab}, downwind, touch and go.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (touch and go)",
+          "value": "",
+          "patterns": [
+            "touch and go"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

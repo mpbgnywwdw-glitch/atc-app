@@ -1,0 +1,267 @@
+{
+  "id": "pack-vrp-zone-entry",
+  "category": "controlled",
+  "title": "Zone entry via a VRP with a hold",
+  "summary": "Request zone entry, hold at a visual reference point, then read back the entry clearance.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "ATIS",
+      "value": "Information {atisLetter} · runway {runway} · QNH {qnhValue}"
+    },
+    {
+      "label": "Position",
+      "value": "3 nm west of Lake VRP, 2,000 ft, inbound from Hadley"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "You're 3 miles west of Lake VRP, inbound to Bramley. Call Bramley Approach on 126.505 and request zone entry.",
+      "model": "Bramley Approach, {cs}, request zone entry.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request zone entry",
+          "value": "",
+          "patterns": [
+            "zone entry|entry|join"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "{cs}, Bramley Approach, pass your message.",
+      "task": "Pass your message: type, from Hadley to Bramley, 3 miles west of Lake, 2,000 feet on QNH {qnhValue}, information {atis}, request zone entry via Lake.",
+      "model": "{cs}, {type}, from Hadley to Bramley, three miles west of Lake, two thousand feet, QNH {qnh}, information {atis}, request zone entry via Lake.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "hadley.*bramley|bramley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "west|lake|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "ATIS information {atis}",
+          "value": "",
+          "patterns": [
+            "information {atisLower}",
+            "info {atisLower}"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request zone entry",
+          "value": "",
+          "patterns": [
+            "zone entry|entry"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{cs}, squawk {squawk}.",
+      "task": "",
+      "model": "Squawk {squawk}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, identified, hold at Lake VRP, not above altitude two thousand feet, expect zone entry in five minutes.",
+      "task": "Read back the hold instruction.",
+      "model": "Hold at Lake, not above altitude two thousand feet, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Hold at Lake",
+          "value": "",
+          "patterns": [
+            "hold(ing)? at lake|hold"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Not above two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, cleared to enter the Bramley control zone via Lake, VFR, not above altitude two thousand feet, QNH {qnh}, report field in sight.",
+      "task": "Read back the zone entry clearance.",
+      "model": "Cleared to enter the control zone via Lake, VFR, not above altitude two thousand feet, QNH {qnh}, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to enter",
+          "value": "",
+          "patterns": [
+            "cleared"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Via Lake",
+          "value": "",
+          "patterns": [
+            "lake"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "VFR",
+          "value": "",
+          "patterns": [
+            "vfr"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Not above two thousand feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "The aerodrome is in sight. Report it.",
+      "model": "{ab}, field in sight.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Field in sight",
+          "value": "",
+          "patterns": [
+            "field in sight|in sight|visual"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}
