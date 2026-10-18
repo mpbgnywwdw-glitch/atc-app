@@ -94,7 +94,7 @@ struct ATCTrainerApp: App {
                     }
                     if env["RT_SKIP_PERMISSIONS"] == nil {
                         await model.requestPermissions()
-                        if #available(macOS 14, *) { RTLanguageModel.shared.prepare() }
+                        if #available(macOS 14, *) { RTLanguageModel.shared.prepare(scenarios: ScenarioLibrary.all + model.store.bundled) }
                     }
                 }
         }

@@ -17,6 +17,8 @@ rm -rf "$APP"
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 cp "$BIN_DIR/ATCTrainer" "$APP/Contents/MacOS/ATCTrainer"
 cp Resources/Info.plist "$APP/Contents/Info.plist"
+# Bundle every scenario pack so the app works offline.
+cp -R scenario-packs "$APP/Contents/Resources/scenario-packs"
 
 # App icon: build every size macOS needs from the 1024 px master (Resources/AppIcon.png).
 ICONSET="build/AppIcon.iconset"

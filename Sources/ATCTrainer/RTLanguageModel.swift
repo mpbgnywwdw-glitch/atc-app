@@ -13,19 +13,19 @@ final class RTLanguageModel {
     static let shared = RTLanguageModel()
 
     /// Bump when the phrase generation changes, to rebuild the cached model.
-    private static let version = "3"
+    private static let version = "4"
     private static let clientIdentifier = "uk.rttrainer.ATCTrainer"
 
     private(set) var configuration: SFSpeechLanguageModel.Configuration?
     private var preparing = false
 
     /// Builds (or loads the cached) model in the background. Safe to call repeatedly.
-    func prepare() {
+    func prepare(scenarios: [Scenario]) {
         guard configuration == nil, !preparing else { return }
         guard SFSpeechRecognizer(locale: Locale(identifier: "en-GB"))?.supportsOnDeviceRecognition == true else { return }
         preparing = true
         Task.detached(priority: .utility) {
-            let result = await Self.build()
+            let result = await Self.build(scenarios: scenarios)
             await MainActor.run {
                 self.configuration = result
                 self.preparing = false
@@ -33,7 +33,7 @@ final class RTLanguageModel {
         }
     }
 
-    private nonisolated static func build() async -> SFSpeechLanguageModel.Configuration? {
+    private nonisolated static func build(scenarios: [Scenario]) async -> SFSpeechLanguageModel.Configuration? {
         do {
             let fm = FileManager.default
             let dir = try fm.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
@@ -45,7 +45,7 @@ final class RTLanguageModel {
             if !fm.fileExists(atPath: asset.path) {
                 let data = SFCustomLanguageModelData(locale: Locale(identifier: "en-GB"),
                                                      identifier: clientIdentifier, version: version)
-                for (phrase, count) in trainingPhrases() {
+                for (phrase, count) in trainingPhrases(scenarios: scenarios) {
                     data.insert(phraseCount: SFCustomLanguageModelData.PhraseCount(phrase: phrase, count: count))
                 }
                 try await data.export(to: asset)
@@ -61,7 +61,7 @@ final class RTLanguageModel {
     }
 
     /// Example pilot calls and readbacks from all scenarios, plus RT building blocks.
-    nonisolated static func trainingPhrases() -> [(String, Int)] {
+    nonisolated static func trainingPhrases(scenarios: [Scenario]) -> [(String, Int)] {
         var counts: [String: Int] = [:]
         func add(_ s: String, _ n: Int = 1) {
             let phrase = s.replacingOccurrences(of: ",", with: "").replacingOccurrences(of: ".", with: "")
@@ -71,7 +71,7 @@ final class RTLanguageModel {
         }
 
         var g = SplitMix64(seed: 413)
-        for scenario in ScenarioLibrary.all {
+        for scenario in scenarios {
             for _ in 0..<25 {
                 let ctx = FlightContext.random(using: &g)
                 for step in scenario.make(ctx).steps {

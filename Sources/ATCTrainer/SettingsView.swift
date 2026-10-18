@@ -53,6 +53,14 @@ private struct GeneralSettings: View {
             } footer: {
                 Text("Turn off to practise listening. Hidden transmissions can still be revealed with a click.")
             }
+
+            Section {
+                Text(Disclaimer.text)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+            } header: {
+                Text("About")
+            }
         }
         .formStyle(.grouped)
     }
@@ -123,6 +131,7 @@ private struct ScenarioSettings: View {
     var body: some View {
         Form {
             Section {
+                LabeledContent("Included") { Text("\(ScenarioLibrary.all.count + store.bundled.count) scenarios") }
                 LabeledContent("Downloaded") { Text("\(store.downloaded.count) scenarios") }
                 Button("Check for New Scenarios") { Task { await store.checkForUpdates() } }
                     .disabled(store.isChecking)
@@ -130,7 +139,7 @@ private struct ScenarioSettings: View {
             } header: {
                 Text("Scenario Packs")
             } footer: {
-                Text("Free scenario packs are downloaded from RT Trainer on GitHub. Leave the address blank to use the default.")
+                Text("Every scenario is included and works offline. New scenarios are added free of charge when you check for updates. Leave the address blank to use the default.")
             }
 
             Section {

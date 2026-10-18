@@ -208,7 +208,7 @@ public enum ScenarioLibrary {
                       elements: [.phrase("Ready for departure", "ready")],
                       model: "\(w.cs), ready for departure.",
                       cautions: [.takeoffWord]),
-                .readback(afis, atc: "\(w.ab), no reported traffic, surface wind \(w.wind), take off at your discretion.",
+                .readback(afis, atc: "\(w.ab), no reported traffic, surface wind \(w.wind), runway \(w.rw), take off at your discretion.",
                           task: "Reply to the AFISO. You're going now.",
                           elements: [.phrase("Taking off", "taking off|takeoff|lining up")],
                           model: "Taking off, \(w.ab)."),

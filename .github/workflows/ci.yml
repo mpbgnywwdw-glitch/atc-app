@@ -23,6 +23,16 @@ jobs:
         with:
           name: RT-Trainer-app
           path: build/RT-Trainer.zip
+      - name: Build Xcode project
+        run: |
+          xcodebuild -project App/RTTrainer.xcodeproj -scheme "RT Trainer" -configuration Release \
+            -destination 'platform=macOS' -derivedDataPath build/xcode CODE_SIGNING_ALLOWED=NO build
+          APP="build/xcode/Build/Products/Release/RT Trainer.app"
+          test -f "$APP/Contents/Resources/scenario-packs/index.json"
+          test -f "$APP/Contents/Resources/PrivacyInfo.xcprivacy"
+          test -s "$APP/Contents/Resources/AppIcon.icns"
+          /usr/libexec/PlistBuddy -c "Print :NSMicrophoneUsageDescription" "$APP/Contents/Info.plist"
+          /usr/libexec/PlistBuddy -c "Print :ITSAppUsesNonExemptEncryption" "$APP/Contents/Info.plist"
       - name: UI smoke test
         run: scripts/ui-smoke.sh controlled-departure
       - uses: actions/upload-artifact@v4

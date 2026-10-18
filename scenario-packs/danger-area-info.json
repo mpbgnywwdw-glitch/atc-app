@@ -1,0 +1,145 @@
+{
+  "id": "pack-danger-area-info",
+  "category": "enRoute",
+  "title": "Danger area activity information",
+  "summary": "Ask London Information whether a danger area on your route is active, and route around it.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "London Information",
+      "value": "124.750"
+    },
+    {
+      "label": "Hazard",
+      "value": "Northfield Range danger area, close to your track"
+    },
+    {
+      "label": "Position",
+      "value": "6 nm south-east of Northfield, 2,000 ft, en route to Hadley"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "",
+      "task": "Your route passes close to the Northfield Range danger area. Ask London Information whether it's active.",
+      "model": "London Information, {cs}, request danger area activity information for Northfield Range.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (London Information)",
+          "value": "London Information",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Request danger area activity information",
+          "value": "",
+          "patterns": [
+            "danger area activity|activity information|danger area"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Northfield Range",
+          "value": "",
+          "patterns": [
+            "northfield"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, London Information, Northfield Range is active until one six three zero.",
+      "task": "Acknowledge, and say you'll route west of the range.",
+      "model": "Roger, routing west of Northfield Range, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Acknowledge",
+          "value": "",
+          "patterns": [
+            "roger"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (avoid the range)",
+          "value": "",
+          "patterns": [
+            "west|avoid|clear|routing"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "London Information",
+      "atc": "{cs}, roger.",
+      "task": "Pass your position: 6 miles south-east of Northfield, 2,000 feet, routing west of the range to Hadley.",
+      "model": "{cs}, six miles south east of Northfield, two thousand feet, routing west of the range to Hadley.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south east|southeast|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Routing",
+          "value": "",
+          "patterns": [
+            "hadley|west"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "London Information",
+      "atc": "{cs}, roger, {region} pressure {rps}.",
+      "task": "Read back the regional pressure setting.",
+      "model": "{region} {rps}, {cs}.",
+      "elements": [
+        {
+          "type": "pressure",
+          "label": "{region} pressure {rps}",
+          "value": "{rpsValue}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

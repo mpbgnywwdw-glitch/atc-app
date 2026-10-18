@@ -1,0 +1,228 @@
+{
+  "id": "pack-matz-remain-outside",
+  "category": "enRoute",
+  "title": "MATZ crossing not available",
+  "summary": "Northfield Zone can't approve a MATZ crossing. Read back the instruction to remain outside and route around.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Northfield Zone",
+      "value": "123.300"
+    },
+    {
+      "label": "Route",
+      "value": "Bramley to Ashwell, VFR"
+    },
+    {
+      "label": "Position",
+      "value": "10 nm south of Northfield, 2,000 ft on QNH {qnhValue}"
+    },
+    {
+      "label": "Next frequency",
+      "value": "London Information 124.750"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Northfield Zone",
+      "atc": "",
+      "task": "Your route crosses the Northfield MATZ. Call Northfield Zone on 123.300 and request a MATZ penetration.",
+      "model": "Northfield Zone, {cs}, request MATZ penetration.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Northfield Zone)",
+          "value": "Northfield Zone",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "MATZ penetration",
+          "value": "",
+          "patterns": [
+            "matz penetration|penetration|matz"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Northfield Zone",
+      "atc": "{cs}, Northfield Zone, pass your message.",
+      "task": "Pass your message: type, from Bramley to Ashwell, 10 miles south of Northfield, 2,000 feet on QNH {qnhValue}, request MATZ penetration.",
+      "model": "{cs}, {type}, from Bramley to Ashwell, one zero miles south of Northfield, two thousand feet, QNH {qnh}, request MATZ penetration.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "bramley.*ashwell|ashwell"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request MATZ penetration",
+          "value": "",
+          "patterns": [
+            "penetration|matz"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Northfield Zone",
+      "atc": "{cs}, MATZ crossing not available due to circuit activity, remain outside the MATZ, Basic Service.",
+      "task": "",
+      "model": "Remain outside the MATZ, Basic Service, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Remain outside the MATZ",
+          "value": "",
+          "patterns": [
+            "remain outside|outside the matz"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Basic Service",
+          "value": "",
+          "patterns": [
+            "basic service"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Northfield Zone",
+      "atc": "",
+      "task": "Tell Northfield you'll route around the east side of the MATZ at 2,000 feet.",
+      "model": "{cs}, routing east of the MATZ, two thousand feet.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Routing east of the MATZ",
+          "value": "",
+          "patterns": [
+            "east|routing"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Northfield Zone",
+      "atc": "{cs}, roger, report clear of the MATZ to the north.",
+      "task": "Acknowledge the instruction.",
+      "model": "Wilco, {cs}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Northfield Zone",
+      "atc": "",
+      "task": "You're clear of the MATZ to the north. Report it, and say you're changing to London Information on 124.750.",
+      "model": "{cs}, clear of the MATZ to the north, changing to London Information one two four decimal seven five zero.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Clear of the MATZ",
+          "value": "",
+          "patterns": [
+            "clear of|leaving"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Next unit",
+          "value": "",
+          "patterns": [
+            "london information|124.75"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "atc",
+      "station": "Northfield Zone",
+      "atc": "{cs}, Basic Service terminated, frequency change approved.",
+      "task": "",
+      "model": "",
+      "elements": [],
+      "cautions": []
+    }
+  ]
+}

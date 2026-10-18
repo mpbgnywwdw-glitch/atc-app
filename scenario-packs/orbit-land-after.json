@@ -1,0 +1,202 @@
+{
+  "id": "pack-orbit-land-after",
+  "category": "controlled",
+  "title": "Busy circuit: orbit and land after",
+  "summary": "Orbit for spacing on the downwind leg, follow traffic, and read back a 'land after' clearance.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Circuit",
+      "value": "Runway {runway} · {Circuit}-hand · QNH {qnhValue}"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "The circuit is busy. You're on the downwind leg and intend to land. Make your downwind call.",
+      "model": "{cs}, downwind to land.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Downwind",
+          "value": "",
+          "patterns": [
+            "downwind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions (to land)",
+          "value": "",
+          "patterns": [
+            "land|full stop"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, orbit right for spacing, report orbit complete.",
+      "task": "",
+      "model": "Orbit right, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Orbit right",
+          "value": "",
+          "patterns": [
+            "orbit(ing)? right"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You've completed the orbit and are back on the downwind leg. Report.",
+      "model": "{ab}, orbit complete.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Orbit complete",
+          "value": "",
+          "patterns": [
+            "orbit complete|complete"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, number two, follow the Cessna on base.",
+      "task": "Acknowledge. You can see the Cessna.",
+      "model": "Number two, traffic in sight, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Number two",
+          "value": "",
+          "patterns": [
+            "number 2"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Traffic in sight",
+          "value": "",
+          "patterns": [
+            "in sight|visual|traffic sighted|have the traffic"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on final behind the Cessna. Make your final call.",
+      "model": "{ab}, final.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, land after the Cessna, runway {rw}, surface wind {wind}.",
+      "task": "Read back the clearance.",
+      "model": "Land after the Cessna, runway {rw}, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Land after the Cessna",
+          "value": "",
+          "patterns": [
+            "land after"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Tower",
+      "atc": "{ab}, vacate left at Charlie.",
+      "task": "",
+      "model": "Vacate left at Charlie, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Vacate",
+          "value": "",
+          "patterns": [
+            "vacate|vacating"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "At Charlie",
+          "value": "",
+          "patterns": [
+            "at c|via c|left c"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

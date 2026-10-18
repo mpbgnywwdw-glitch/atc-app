@@ -1,0 +1,242 @@
+{
+  "id": "pack-special-vfr",
+  "category": "controlled",
+  "title": "Special VFR zone entry",
+  "summary": "The weather in the Bramley zone is below VFR minima. Ask for and read back a Special VFR clearance.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Weather",
+      "value": "Bramley zone below VFR minima; Special VFR available"
+    },
+    {
+      "label": "Position",
+      "value": "10 nm south of Bramley, 1,500 ft on QNH {qnhValue}, inbound from Ashwell"
+    },
+    {
+      "label": "Entry point",
+      "value": "Lake VRP"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "The Bramley zone is below VFR minima. Call Bramley Approach on 126.505 and ask for a Special VFR clearance.",
+      "model": "Bramley Approach, {cs}, request Special VFR clearance.",
+      "elements": [
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Special VFR",
+          "value": "",
+          "patterns": [
+            "special vfr|svfr"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "{cs}, Bramley Approach, pass your message.",
+      "task": "Pass your message: type, from Ashwell to Bramley, 10 miles south of Bramley, 1,500 feet on QNH {qnhValue}, request Special VFR to join.",
+      "model": "{cs}, {type}, from Ashwell to Bramley, one zero miles south of Bramley, one thousand five hundred feet, QNH {qnh}, request Special VFR to join.",
+      "elements": [
+        {
+          "type": "aircraftType",
+          "label": "Aircraft type",
+          "value": "",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Departure and destination",
+          "value": "",
+          "patterns": [
+            "ashwell.*bramley|bramley"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 1500 feet",
+          "value": "1500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Request Special VFR",
+          "value": "",
+          "patterns": [
+            "special vfr|svfr"
+          ],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{cs}, squawk {squawk}.",
+      "task": "",
+      "model": "Squawk {squawk}, {cs}.",
+      "elements": [
+        {
+          "type": "squawk",
+          "label": "Squawk {squawk}",
+          "value": "{squawkCode}",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, identified, cleared to enter the Bramley control zone Special VFR, via Lake VRP, not above altitude one thousand five hundred feet, QNH {qnh}, report at Lake.",
+      "task": "Read back the Special VFR clearance.",
+      "model": "Cleared to enter the control zone Special VFR, via Lake, not above altitude one thousand five hundred feet, QNH {qnh}, wilco, {ab}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Cleared to enter",
+          "value": "",
+          "patterns": [
+            "cleared"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Special VFR",
+          "value": "",
+          "patterns": [
+            "special vfr|svfr"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Via Lake",
+          "value": "",
+          "patterns": [
+            "lake"
+          ],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Not above one thousand five hundred feet",
+          "value": "1500",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "pressure",
+          "label": "QNH {qnh}",
+          "value": "{qnhValue}",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Wilco",
+          "value": "",
+          "patterns": [
+            "wilco"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "call",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "You're at Lake VRP at 1,500 feet. Report.",
+      "model": "{ab}, Lake, one thousand five hundred feet.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "At Lake",
+          "value": "",
+          "patterns": [
+            "lake"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 1500 feet",
+          "value": "1500",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "readback",
+      "station": "Bramley Approach",
+      "atc": "{ab}, contact Bramley Tower one one eight decimal three three zero.",
+      "task": "Read back the frequency change.",
+      "model": "Bramley Tower one one eight decimal three three zero, {ab}.",
+      "elements": [
+        {
+          "type": "number",
+          "label": "Frequency 118.330",
+          "value": "118.330",
+          "patterns": [],
+          "required": true
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}

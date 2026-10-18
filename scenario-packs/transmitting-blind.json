@@ -1,0 +1,187 @@
+{
+  "id": "pack-transmitting-blind",
+  "category": "emergency",
+  "title": "Receiver failure: transmitting blind",
+  "summary": "Your receiver has failed. Squawk 7600 and make blind transmissions as you join and land, watching for light signals.",
+  "briefing": [
+    {
+      "label": "Callsign",
+      "value": "{reg} — {cs}"
+    },
+    {
+      "label": "Aircraft",
+      "value": "{typeCode}"
+    },
+    {
+      "label": "Bramley Approach",
+      "value": "126.505"
+    },
+    {
+      "label": "Bramley Tower",
+      "value": "118.330"
+    },
+    {
+      "label": "Situation",
+      "value": "Receiver failed, transmitter believed to work; squawking 7600; 8 nm south of Bramley at 2,000 ft"
+    },
+    {
+      "label": "Light signals",
+      "value": "Steady green to an aircraft in flight: cleared to land"
+    }
+  ],
+  "steps": [
+    {
+      "kind": "emergency",
+      "station": "Bramley Approach",
+      "atc": "",
+      "task": "Your receiver has failed but your transmitter may still work, and you've set squawk 7600. You're 8 miles south of Bramley at 2,000 feet and intend to join overhead and land on runway {runway}. Make a blind transmission to Bramley Approach.",
+      "model": "Transmitting blind due to receiver failure, Bramley Approach, {cs}, eight miles south of Bramley, two thousand feet, squawking seven six zero zero, intend to join overhead and land runway {rw}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Transmitting blind",
+          "value": "",
+          "patterns": [
+            "transmitting blind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Receiver failure",
+          "value": "",
+          "patterns": [
+            "receiver"
+          ],
+          "required": true
+        },
+        {
+          "type": "station",
+          "label": "Station called (Bramley Approach)",
+          "value": "Bramley Approach",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "phrase",
+          "label": "Position",
+          "value": "",
+          "patterns": [
+            "south|miles"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "number",
+          "label": "Squawk seven six zero zero",
+          "value": "7600",
+          "patterns": [],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Intentions",
+          "value": "",
+          "patterns": [
+            "join|land"
+          ],
+          "required": true
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "emergency",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're overhead Bramley at 2,000 feet. Make another blind transmission, this time to Bramley Tower.",
+      "model": "Transmitting blind due to receiver failure, Bramley Tower, {cs}, overhead Bramley, two thousand feet, joining for runway {rw}.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Transmitting blind",
+          "value": "",
+          "patterns": [
+            "transmitting blind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Overhead",
+          "value": "",
+          "patterns": [
+            "overhead"
+          ],
+          "required": true
+        },
+        {
+          "type": "altitude",
+          "label": "Altitude 2000 feet",
+          "value": "2000",
+          "patterns": [],
+          "required": false
+        },
+        {
+          "type": "runway",
+          "label": "Runway {rw}",
+          "value": "{runway}",
+          "patterns": [],
+          "required": false
+        }
+      ],
+      "cautions": []
+    },
+    {
+      "kind": "emergency",
+      "station": "Bramley Tower",
+      "atc": "",
+      "task": "You're on final and the tower is showing you a steady green light (cleared to land). Transmit blind that you're on final and landing.",
+      "model": "Transmitting blind, Bramley Tower, {cs}, final runway {rw}, landing.",
+      "elements": [
+        {
+          "type": "phrase",
+          "label": "Transmitting blind",
+          "value": "",
+          "patterns": [
+            "transmitting blind"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Final",
+          "value": "",
+          "patterns": [
+            "final"
+          ],
+          "required": true
+        },
+        {
+          "type": "phrase",
+          "label": "Landing",
+          "value": "",
+          "patterns": [
+            "landing|land"
+          ],
+          "required": false
+        }
+      ],
+      "cautions": []
+    }
+  ]
+}
