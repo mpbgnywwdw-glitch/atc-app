@@ -19,24 +19,21 @@ Numbers are compared by value, so the recogniser can write "1013", "one zero one
 
 ## Scenarios
 
-| Category | Scenario |
+36 scenarios are included, and all of them work offline:
+
+| Category | Scenarios |
 |---|---|
-| Controlled aerodrome | Departure (radio check, taxi with ATIS, line up, take-off, leaving the zone) |
-| Controlled aerodrome | Rejoin and circuit (join, downwind, sequencing, landing clearance, vacating) |
-| AFIS & Air/Ground | AFIS departure ("take off at your discretion") |
-| AFIS & Air/Ground | Air/Ground arrival with an overhead join |
-| En route | Basic Service from London Information |
-| En route | Traffic Service from a LARS unit (squawk, identification, traffic information, freecall) |
-| En route | MATZ penetration (QFE, squawk, reporting clear) |
-| Emergencies | MAYDAY: engine failure (London Centre 121.500) |
-| Emergencies | PAN PAN: rough-running engine |
+| Controlled aerodrome | Departure; rejoin and circuit; taxiing and giving way; conditional line-up; go-around; touch-and-go; orbit and "land after"; backtrack; Special VFR; zone entry and departure via VRPs |
+| AFIS & Air/Ground | AFIS departure and arrival; AFIS backtrack; Air/Ground departure, arrival, circuits and overhead join |
+| En route | Basic Service; Traffic Service; LARS; zone transit; MATZ penetration and "remain outside"; position reports; danger area activity information; altimeter check; weather diversion; QDM homing |
+| Emergencies | MAYDAY; MAYDAY relay; PAN PAN (rough engine, low fuel, passenger ill, practice PAN); receiver failure (transmitting blind) |
 
 The callsign, runway, wind, QNH, squawk and ATIS letter are randomised on every run. You can set your own registration and aircraft type in **Settings** (⌘,).
 Bramley, Ashwell, Hadley, Westbury and Northfield are fictional, so nobody mistakes their frequencies for real ones.
 
 ## More scenarios
 
-**Check for new scenarios** (sidebar button, or File › Check for New Scenarios) downloads the free scenario packs published in [`scenario-packs/`](scenario-packs) of this repository and lists them under **Downloaded** in the sidebar. It needs no account or API key. New packs are added on request, for example by asking Claude Code to write some.
+Every pack in [`scenario-packs/`](scenario-packs) is bundled into the app. **Check for New Scenarios** (sidebar button, or Scenario › Check for New Scenarios) downloads packs published since your copy was built and lists them under **New** in the sidebar. It needs no account or API key. New packs are added on request, for example by asking Claude Code to write some.
 
 Every downloaded scenario is checked by the app before it's added: each example call has to pass its own checks across many random flights, so a broken scenario never marks you wrong unfairly.
 
@@ -47,8 +44,12 @@ Scenarios are JSON files (see [`scenario-packs/go-around.json`](scenario-packs/g
 ## Requirements
 
 - macOS 14 Sonoma or later
-- Xcode 15 or later, or the Command Line Tools with Swift 5.9+
+- Xcode 16 or later for the Xcode project; Xcode 15 or the Command Line Tools with Swift 5.9+ for `make run`
 - A microphone. A headset reduces echo from the ATC voice.
+
+## Xcode project
+
+`App/RTTrainer.xcodeproj` builds the sandboxed, App Store version. It compiles `Sources/ATCTrainer` and uses `RTCore` from this package. See [docs/APP_STORE.md](docs/APP_STORE.md) for signing and submission, and [docs/PRIVACY.md](docs/PRIVACY.md) for a privacy policy you can publish.
 
 ## Build and run
 
